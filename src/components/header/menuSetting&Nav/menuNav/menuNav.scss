@@ -1,0 +1,14 @@
+.header__nav{
+
+  ul{
+    display: inline-flex;
+    justify-content: space-evenly;
+  }
+  li{
+    padding: 3px;
+    margin-right: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: Poppins,sans-serif;
+  }
+}

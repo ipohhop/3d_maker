@@ -1,0 +1,18 @@
+.header__container{
+  height: 73px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+}
+.header-logo__container{
+  width: 108px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header__left-block{
+  display: flex;
+  height: 100%;
+}
