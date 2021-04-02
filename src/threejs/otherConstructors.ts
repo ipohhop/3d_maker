@@ -1,5 +1,6 @@
 // outer
 import * as THREE from 'three';
+import {MaterialConstructors} from "./threejsTypes";
 
 export function lightThreePoints() {
     const lights = [];
@@ -41,3 +42,49 @@ export function creatGrid(width:number=100,height:number=100) {
     if (helper.material instanceof THREE.Material) helper.material.transparent = true;
     return helper
 }
+
+
+//  !! функция создания куба
+
+export function creatBox(x: number = 0, y: number = 0, z: number = 0,
+                         materialSettings?: MaterialConstructors,
+                         width: number = 0.9, height: number = 0.9, depth: number = 0.9) {
+    // геометрия куба
+    const geometry = new THREE.BoxGeometry(width, height, depth);
+    // материал куба
+    const material = materialSettings || new THREE.MeshPhongMaterial({
+        color: '#140ccd',
+        emissive: 0x072534,
+        side: THREE.DoubleSide,
+        flatShading: true
+    });
+    // сборка куба
+    const cube = new THREE.Mesh(geometry, material);
+    // указание положения куба
+    cube.position.copy(new THREE.Vector3(x, y, z))
+
+    return cube
+}
+
+
+//  !! функция создания куба кубов )
+export function generationCubs(maxWidth: number, maxHeight: number) {
+    let array = []
+
+    function widthGeneration(maxWidth: number, height: number) {
+        let perimeter = []
+        for (let i = 0; i < maxWidth; i++) {
+            for (let j = 0; j < maxWidth; j++) {
+                perimeter.push(creatBox(i, j, height))
+            }
+        }
+        return perimeter
+    }
+
+    for (let i = 0; i < maxHeight; i++) {
+        array.push(...widthGeneration(maxWidth, i))
+    }
+    return array
+}
+
+
