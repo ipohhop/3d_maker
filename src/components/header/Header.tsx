@@ -8,8 +8,7 @@ import Logo from "../public/logo/Logo";
 import HeaderInfo from "./menuSetting&Nav/HeaderInfo";
 
 
-interface OwnProps {
-}
+interface OwnProps {}
 
 type Props = OwnProps;
 
@@ -21,12 +20,8 @@ const Header: FunctionComponent<Props> = (props) => {
                 <div className="header-logo__container">
                     <Logo/>
                 </div>
-
                 <HeaderInfo/>
-
             </div>
-
-
         </header>
     );
 };

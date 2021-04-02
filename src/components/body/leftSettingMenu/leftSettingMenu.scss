@@ -1,0 +1,12 @@
+.left-settings-menu__container{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  border-right: 1px solid #e0e0e0;
+  border-left: 1px solid #e0e0e0;
+  background-color: #fff;
+  width: 320px;
+  height: 100%;
+  overflow-x: visible;
+}
