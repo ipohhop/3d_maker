@@ -3,10 +3,13 @@
   height: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   position: relative;
   overflow: hidden;
 }
 
 .canvas__inner-block{
-
+  -webkit-box-shadow: -4px 4px 8px 4px rgba(34, 60, 80, 0.29);
+  -moz-box-shadow: -4px 4px 8px 4px rgba(34, 60, 80, 0.29);
+  box-shadow: -4px 4px 8px 4px rgba(34, 60, 80, 0.29);
 }

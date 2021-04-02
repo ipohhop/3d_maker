@@ -33,10 +33,6 @@ const CanvasElement: FunctionComponent<Props> = (props) => {
         canvas.current.addLights(lightThreePoints())
     },[])
 
-    useEffect(()=> {
-        canvas.current.startWindowResize()
-        return canvas.current.stopWindowResize()
-    },[])
 
   return (
       <div ref={canvasContainer} className="canvas__inner-block">
