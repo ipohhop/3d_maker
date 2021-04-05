@@ -6,7 +6,8 @@ import React from 'react'
 
 // local
 import {creatScene} from "./scene&camera";
-import {Camera, Grid, Light, SceneSettings} from "./threejsTypes";
+import {Camera, Elements, Grid, Light, SceneSettings} from "./threejsTypes";
+import {Object3D} from "three";
 
 //  !! function for creat canvas object
 
@@ -84,34 +85,54 @@ export class BaseCreator {
 
 export class Creator extends BaseCreator {
 
-    protected element: THREE.Mesh | THREE.Mesh[] | null;
-    addElement: (element: (THREE.Mesh | THREE.Mesh[]), inGroup?: boolean, x?: number, y?: number, z?: number) => void;
+    elements: Elements;
     addLights: (lights: (Light | Light[])) => void;
     addGrid: (grid: (Grid | Grid[])) => void;
     settingScene: (objectSettings: SceneSettings) => void;
     tornPerspectiveCamera: (aspect?: number, near?: number, far?: number, x?: number, y?: number, z?: number) => void;
+    addElement: (element: (THREE.Mesh | THREE.Mesh[]), name: string, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
         this.width = width
         this.height = height
         this.camera = camera
-        this.element = null
+        this.elements = {
+            groups: {},
+            elements: {}
+        }
 
         // method for add element in scene
-        this.addElement = (element: THREE.Mesh | THREE.Mesh[], inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
+        this.addElement = (element: THREE.Mesh | THREE.Mesh[], nameElement: string, inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
 
+            // сообщение оперезаписи элемента
+            if (nameElement in this.elements.groups || nameElement in this.elements.elements) console.log(`вы перезаписали элемент ${nameElement}`)
+
+            //если группа создаем объект группы и заполняем элементом(ми) добавляем группу по name в объект elements.group[name] далее добавляем в сцену
             if (inGroup) {
                 const group = new THREE.Group();
-                if (element instanceof Array) (<THREE.Group>group).add(...element)
+                if (element instanceof Array) {
+                    (<THREE.Group>group).add(...element)
+                }
                 if (element instanceof THREE.Mesh) group.add(element)
                 group.position.set(x, y, z)
-                this.scene.add(group)
+                this.elements.groups[nameElement] = (<THREE.Group>group)
+                this.scene.add(this.elements.groups[nameElement])
+
                 return
             }
-            element instanceof Array
-                ? this.scene.add(...element)
-                : this.scene.add(element);
+
+            //если не в группе по name в объект elements.group[name] далее добавляем в сцену
+            if (element instanceof Array) {
+                element.forEach((item, index) => {
+                    this.elements.elements[nameElement + (index+1)] = item
+                    this.scene.add(item)
+                })
+            } else {
+                element.position.set(x, y, z)
+                this.elements.elements[nameElement]=element
+                this.scene.add(element);
+            }
         }
 
         // method for add lights in scene
@@ -120,7 +141,7 @@ export class Creator extends BaseCreator {
                 ? this.scene.add(...lights)
                 : this.scene.add(lights);
         }
-
+        // method for add grid in scene
         this.addGrid = (grid: Grid | Grid[]) => {
             grid instanceof Array
                 ? this.scene.add(...grid)
@@ -150,7 +171,7 @@ export class Creator extends BaseCreator {
     }
 }
 
-class EventBackgroundCanvas extends Creator{
+class EventBackgroundCanvas extends Creator {
     // private eventClick: () => void;
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)

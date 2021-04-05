@@ -30,7 +30,8 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
         return canvas.current.stopWindowResize
     }, [])
     useEffect(()=>{
-        canvas.current.addElement(planeCreator(0.3,0.3,1,1),false,-1,1.8,1)
+        canvas.current.addElement(planeCreator(0.3,0.3,1,1),"planeBack",false,-1,1.8,1)
+
     },[])
 
     // useEffect(() => {

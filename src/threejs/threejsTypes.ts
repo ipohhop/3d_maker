@@ -44,3 +44,17 @@ export type Geometries =
     | THREE.WireframeGeometry
 
 export type MaterialConstructors = THREE.MeshPhongMaterial | THREE.MeshBasicMaterial | THREE.MeshLambertMaterial
+
+
+//интерфейся для организации елементов объекта
+interface GroupsElements {
+    [name:string]:THREE.Group
+}
+interface ElementInElements {
+    [name:string]:THREE.Mesh
+}
+
+export interface Elements {
+    groups:GroupsElements,
+    elements:ElementInElements
+}
