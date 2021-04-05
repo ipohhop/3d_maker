@@ -52,17 +52,36 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
         loader.load('models/RobotExpressive.glb', function (gltf) {
             const element = gltf.scene
             element.receiveShadow=true
+            element.castShadow=true
             element.scale.set(0.1,0.1,0.1)
             element.position.set(-1.45,1.3,0)
             element.rotateY(0.3)
-
-
 
             canvas.current.addElement(gltf.scene, "robot")
         }, undefined, function (error) {
             console.error(error)
         })
     }, [])
+
+    // useEffect(() => {
+        // const ktx2Loader = new KTX2Loader()
+        //     .setTranscoderPath( 'js/libs/basis/' )
+        //     .detectSupport( renderer );
+        //
+        // const loader = new GLTFLoader();
+        // loader.setKTX2Loader( ktx2Loader );
+        // loader.setMeshoptDecoder( MeshoptDecoder );
+    //     loader.load('models/coffeemat.glb', function (gltf) {
+    //         const element = gltf.scene
+    //         console.log(element)
+    //         element.position.set(-1,1.3,0)
+    //         element.rotateY(0.3)
+    //
+    //         canvas.current.addElement(gltf.scene, "coffee")
+    //     }, undefined, function (error) {
+    //         console.error(error)
+    //     })
+    // }, [])
 
 
     useEffect(()=>{
