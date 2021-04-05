@@ -12,7 +12,7 @@ import {Camera, Grid, Light, SceneSettings} from "./threejsTypes";
 
 export class BaseCreator {
 
-    protected scene: THREE.Scene;
+    scene: THREE.Scene;
     protected renderer: THREE.WebGLRenderer;
     protected startAnimation: () => void;
     protected camera: Camera;
@@ -98,6 +98,7 @@ export class Creator extends BaseCreator {
         this.camera = camera
         this.element = null
 
+        // method for add element in scene
         this.addElement = (element: THREE.Mesh | THREE.Mesh[], inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
 
             if (inGroup) {
@@ -108,12 +109,12 @@ export class Creator extends BaseCreator {
                 this.scene.add(group)
                 return
             }
-
             element instanceof Array
                 ? this.scene.add(...element)
                 : this.scene.add(element);
         }
 
+        // method for add lights in scene
         this.addLights = (lights: Light | Light[]) => {
             if (lights) lights instanceof Array
                 ? this.scene.add(...lights)
@@ -126,6 +127,7 @@ export class Creator extends BaseCreator {
                 : this.scene.add(grid);
         }
 
+        // method for setting parameters scene
         this.settingScene = (objectSettings: SceneSettings) => {
             if (objectSettings.background) this.scene.background = objectSettings.background
             if (objectSettings.fog) this.scene.fog = objectSettings.fog
@@ -134,6 +136,7 @@ export class Creator extends BaseCreator {
             if (objectSettings.environment) this.scene.environment = objectSettings.environment
         }
 
+        // method for setting parameters perspective camera
         this.tornPerspectiveCamera = (aspect?: number, near?: number, far?: number, x?: number, y?: number, z?: number) => {
             if (this.camera instanceof THREE.PerspectiveCamera) {
                 if (aspect) this.camera.aspect = aspect
@@ -144,5 +147,55 @@ export class Creator extends BaseCreator {
                 if (z === 0 || z) this.camera.position.z = z
             }
         }
+    }
+}
+
+class EventBackgroundCanvas extends Creator{
+    // private eventClick: () => void;
+    constructor(camera: Camera, width: number, height: number) {
+        super(camera, width, height)
+        this.width = width
+        this.height = height
+        this.camera = camera
+
+        // this.eventClick=()=>{
+        //     let selectedObject = null;
+        //     let rot = 0
+        //
+        //     const onDocumentMouseClick = (event: any) => {
+        //
+        //         event.preventDefault();
+        //
+        //         let intersects = getIntersects(event.layerX, event.layerY , this.camera,<THREE.Group>this.group,this.width,this.height);
+        //         if (intersects.length > 0) {
+        //             selectedObject = intersects[0].object;
+        //             // @ts-ignore
+        //             if (selectedObject.material.color.getHex()==creatBox().material.color.getHex())selectedObject.material.color.set('#bde045')
+        //             // @ts-ignore
+        //             else if (selectedObject.material.color.toJSON()==12443717)selectedObject.material.color.set('#e71671')
+        //             // rot += 10
+        //             // selectedObject.rotation.y = Math.PI * rot / 180;
+        //         }
+        //     }
+        //
+        //     let raycaster = new THREE.Raycaster();
+        //     let mouseVector = new THREE.Vector2();
+        //
+        //     function getIntersects(x:number, y:number , camera : Camera ,cube :THREE.Group ,width:number,height:number) {
+        //
+        //         let Crx = (x / width) * 2 - 1;
+        //         let Cry = -((y) / height) * 2 + 1;
+        //
+        //         mouseVector.set(Crx, Cry);
+        //
+        //         raycaster.setFromCamera(mouseVector,<THREE.PerspectiveCamera | THREE.OrthographicCamera>camera);
+        //
+        //         // cube - объект проверяемый на пересечение с узлом
+        //         return raycaster.intersectObject(cube, true);
+        //     }
+        //
+        //     (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
+        // }
+
     }
 }

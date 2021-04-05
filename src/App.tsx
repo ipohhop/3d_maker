@@ -5,15 +5,17 @@ import React from 'react';
 import './App.css';
 import Body from './components/body/Body';
 import Header from "./components/header/Header";
+import BackCanvas from "./components/backCanvas/BackCanvas";
 
 
 function App() {
-  return (
-    <div className="App_container">
-      <Header/>
-      <Body/>
-    </div>
-  );
+    return (
+        <div className="App_container">
+            <BackCanvas/>
+            {/*<Header/>*/}
+            {/*<Body/>*/}
+        </div>
+    );
 }
 
 export default App;

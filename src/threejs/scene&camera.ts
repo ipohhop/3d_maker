@@ -34,6 +34,12 @@ export function creatPerspectiveCamera(width:number,height:number,x:number=0,y:n
     cameraPoint.position.z = z;
     cameraPoint.position.x = x;
     cameraPoint.position.y = y;
+    // const target = new THREE.Vector3(1, 2, 3)
+    // cameraPoint.getWorldDirection(target)
+    // cameraPoint.focus=122222
+    cameraPoint.rotateX(0)
+    cameraPoint.rotateY(-0.5)
+    cameraPoint.rotateZ(0)
     return cameraPoint
 }
 

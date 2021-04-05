@@ -26,16 +26,16 @@ export function versionTwo() {
 
 
 export function versionThree() {
-        const color = 0xFFFFFF;
-        const intensity = 1;
-        const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(5, 10, 2);
+    const color = 0xFFFFFF;
+    const intensity = 1;
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(5, 10, 2);
 
     return light
 }
 
 
-export function creatGrid(width:number=100,height:number=100) {
+export function creatGrid(width: number = 100, height: number = 100) {
     const helper = new THREE.GridHelper(100, 100);
     helper.position.y = -1;
     if (helper.material instanceof THREE.Material) helper.material.opacity = 0.25;
@@ -88,3 +88,9 @@ export function generationCubs(maxWidth: number, maxHeight: number) {
 }
 
 
+export function planeCreator(width: number = 1, height: number = 1, widthSegments: number = 1, heightSegments: number = 1) {
+    const geometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
+    const material = new THREE.MeshBasicMaterial({color: 0xffff00, side: THREE.DoubleSide})
+    // material.version=0
+    return new THREE.Mesh(geometry, material);
+}

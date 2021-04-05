@@ -5,3 +5,35 @@
   position: relative;
   overflow: hidden;
 }
+
+.module-control__container{
+  width: 45px;
+  height: 90px;
+ display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+
+
+  svg{
+    width: 30px;
+    height: 30px;
+  }
+
+}
+
+.module-control__item{
+margin-bottom: 10px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  box-shadow: 2px 3px 9px 1px #d8d8d8;
+  cursor: pointer;
+}
+
+
+.controls-module__active{
+  border-color: #ff5722;
+  box-shadow: inset 2px 3px 9px 1px #d8d8d8;
+}
