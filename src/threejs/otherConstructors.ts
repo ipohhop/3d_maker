@@ -91,6 +91,6 @@ export function generationCubs(maxWidth: number, maxHeight: number) {
 export function planeCreator(width: number = 1, height: number = 1, widthSegments: number = 1, heightSegments: number = 1) {
     const geometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
     const material = new THREE.MeshBasicMaterial({color: 0xffff00, side: THREE.DoubleSide})
-    // material.version=0
+    material.visible=false
     return new THREE.Mesh(geometry, material);
 }

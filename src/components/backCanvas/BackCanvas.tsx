@@ -2,13 +2,17 @@
 import React, {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
+
+
 //local
 import {creatPerspectiveCamera} from "../../threejs/scene&camera";
-import {Creator} from "../../threejs/root";
+import {Creator, EventBackgroundCanvas} from "../../threejs/root";
 import {lightThreePoints, planeCreator} from "../../threejs/otherConstructors";
 import "./backCanvas.scss"
 
-interface OwnProps {}
+
+interface OwnProps {
+}
 
 type Props = OwnProps;
 
@@ -20,33 +24,57 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
 
     const camera = useMemo(() => creatPerspectiveCamera(width, height, -1.4, 1.7, 1.5), [width, height])
 
-    const canvas = useRef(new Creator(camera, width, height))
+    const canvas = useRef(new EventBackgroundCanvas(camera, width, height))
 
     useEffect(() => canvas.current.init(canvasContainer, false), [])
 
     useEffect(() => canvas.current.addLights(lightThreePoints()), [])
+
     useEffect(() => {
         canvas.current.startWindowResize()
         return canvas.current.stopWindowResize
     }, [])
-    useEffect(()=>{
-        canvas.current.addElement(planeCreator(0.3,0.3,1,1),"planeBack",false,-1,1.8,1)
+    useEffect(() => {
+        canvas.current.addElement(planeCreator(0.29, 0.21, 1, 1), "planeBack", false, -1.1, 1.68, 1)
+    }, [])
 
+    useEffect(() => {
+        const loader = new GLTFLoader();
+        loader.load('models/back/scene.gltf', function (gltf) {
+            canvas.current.addElement(gltf.scene, "background")
+        }, undefined, function (error) {
+            console.error(error)
+        })
+    }, [])
+
+    useEffect(() => {
+        const loader = new GLTFLoader();
+        loader.load('models/RobotExpressive.glb', function (gltf) {
+            const element = gltf.scene
+            element.receiveShadow=true
+            element.scale.set(0.1,0.1,0.1)
+            element.position.set(-1.45,1.3,0)
+            element.rotateY(0.3)
+
+
+
+            canvas.current.addElement(gltf.scene, "robot")
+        }, undefined, function (error) {
+            console.error(error)
+        })
+    }, [])
+
+
+    useEffect(()=>{
+        canvas.current.clickOnMonitor()
     },[])
 
-    // useEffect(() => {
-    //     const loader = new GLTFLoader();
-    //     loader.load('models/back/scene.gltf', function (gltf) {
-    //         console.log(gltf.scene)
-    //         canvas.current.scene.add(gltf.scene)
-    //     }, undefined, function (error) {
-    //         console.error(error)
-    //     })
-    // }, [])
+
     return (
 
         <>
-            <div ref={canvasContainer} className="backCanvas__container" style={{width:"100vw",height:"100vh",position:"fixed",zIndex:-1}}/>
+            <div ref={canvasContainer} className="backCanvas__container"
+                 style={{width: "100vw", height: "100vh", position: "fixed", zIndex: -1}}/>
         </>
 
     );

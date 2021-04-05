@@ -6,14 +6,14 @@ import React from 'react'
 
 // local
 import {creatScene} from "./scene&camera";
-import {Camera, Elements, Grid, Light, SceneSettings} from "./threejsTypes";
+import {Camera, Elements, EventCallBack, Grid, Light, SceneSettings} from "./threejsTypes";
 import {Object3D} from "three";
 
 //  !! function for creat canvas object
 
 export class BaseCreator {
 
-    scene: THREE.Scene;
+    protected scene: THREE.Scene;
     protected renderer: THREE.WebGLRenderer;
     protected startAnimation: () => void;
     protected camera: Camera;
@@ -90,7 +90,7 @@ export class Creator extends BaseCreator {
     addGrid: (grid: (Grid | Grid[])) => void;
     settingScene: (objectSettings: SceneSettings) => void;
     tornPerspectiveCamera: (aspect?: number, near?: number, far?: number, x?: number, y?: number, z?: number) => void;
-    addElement: (element: (THREE.Mesh | THREE.Mesh[]), name: string, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
+    addElement: (element: (THREE.Mesh | THREE.Mesh[] | THREE.Group), name: string, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
@@ -103,11 +103,17 @@ export class Creator extends BaseCreator {
         }
 
         // method for add element in scene
-        this.addElement = (element: THREE.Mesh | THREE.Mesh[], nameElement: string, inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
+        this.addElement = (element: THREE.Mesh | THREE.Mesh[] | THREE.Group, nameElement: string, inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
 
             // сообщение оперезаписи элемента
             if (nameElement in this.elements.groups || nameElement in this.elements.elements) console.log(`вы перезаписали элемент ${nameElement}`)
 
+            //если element это group добавляем группу по name в объект elements.group[name] далее добавляем в сцену
+            if (element instanceof THREE.Group) {
+                this.elements.groups[nameElement] = element
+                this.scene.add(element)
+                return
+            }
             //если группа создаем объект группы и заполняем элементом(ми) добавляем группу по name в объект elements.group[name] далее добавляем в сцену
             if (inGroup) {
                 const group = new THREE.Group();
@@ -125,12 +131,12 @@ export class Creator extends BaseCreator {
             //если не в группе по name в объект elements.group[name] далее добавляем в сцену
             if (element instanceof Array) {
                 element.forEach((item, index) => {
-                    this.elements.elements[nameElement + (index+1)] = item
+                    this.elements.elements[nameElement + (index + 1)] = item
                     this.scene.add(item)
                 })
             } else {
                 element.position.set(x, y, z)
-                this.elements.elements[nameElement]=element
+                this.elements.elements[nameElement] = element
                 this.scene.add(element);
             }
         }
@@ -171,52 +177,49 @@ export class Creator extends BaseCreator {
     }
 }
 
-class EventBackgroundCanvas extends Creator {
+export class EventBackgroundCanvas extends Creator {
     // private eventClick: () => void;
+    clickOnMonitor: () => void;
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
         this.width = width
         this.height = height
         this.camera = camera
-
-        // this.eventClick=()=>{
-        //     let selectedObject = null;
-        //     let rot = 0
+        // this.events = {}
         //
-        //     const onDocumentMouseClick = (event: any) => {
         //
-        //         event.preventDefault();
+        // this.addEventClick=(element:THREE.Group | THREE.Mesh,callbackTrue:EventCallBack ,callbackFalse?:EventCallBack)=>{
         //
-        //         let intersects = getIntersects(event.layerX, event.layerY , this.camera,<THREE.Group>this.group,this.width,this.height);
-        //         if (intersects.length > 0) {
-        //             selectedObject = intersects[0].object;
-        //             // @ts-ignore
-        //             if (selectedObject.material.color.getHex()==creatBox().material.color.getHex())selectedObject.material.color.set('#bde045')
-        //             // @ts-ignore
-        //             else if (selectedObject.material.color.toJSON()==12443717)selectedObject.material.color.set('#e71671')
-        //             // rot += 10
-        //             // selectedObject.rotation.y = Math.PI * rot / 180;
-        //         }
-        //     }
-        //
-        //     let raycaster = new THREE.Raycaster();
-        //     let mouseVector = new THREE.Vector2();
-        //
-        //     function getIntersects(x:number, y:number , camera : Camera ,cube :THREE.Group ,width:number,height:number) {
-        //
-        //         let Crx = (x / width) * 2 - 1;
-        //         let Cry = -((y) / height) * 2 + 1;
-        //
-        //         mouseVector.set(Crx, Cry);
-        //
-        //         raycaster.setFromCamera(mouseVector,<THREE.PerspectiveCamera | THREE.OrthographicCamera>camera);
-        //
-        //         // cube - объект проверяемый на пересечение с узлом
-        //         return raycaster.intersectObject(cube, true);
-        //     }
-        //
-        //     (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
         // }
+
+
+        this.clickOnMonitor=()=>{
+            let selectedObject = null;
+
+            const onDocumentMouseClick = (event: any) => {
+                event.preventDefault();
+                // @ts-ignore
+                let intersects = getIntersects(event.layerX, event.layerY , this.camera,<THREE.Group>this.elements.elements.planeBack,this.width,this.height);
+                if (intersects.length > 0) console.log(111)
+            }
+
+            let raycaster = new THREE.Raycaster();
+            let mouseVector = new THREE.Vector2();
+
+            function getIntersects(x:number, y:number , camera : Camera ,object :THREE.Group | THREE.Mesh ,width:number,height:number) {
+                let Crx = (x / width) * 2 - 1;
+                let Cry = -((y) / height) * 2 + 1;
+
+                mouseVector.set(Crx, Cry);
+
+                raycaster.setFromCamera(mouseVector,<THREE.PerspectiveCamera | THREE.OrthographicCamera>camera);
+
+                // cube - объект проверяемый на пересечение с узлом
+                return raycaster.intersectObject(object, true);
+            }
+
+            (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
+        }
 
     }
 }

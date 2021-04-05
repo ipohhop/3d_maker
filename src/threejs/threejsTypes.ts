@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import {Creator} from "./root";
 
 export interface SceneSettings {
     background?: THREE.Color | THREE.Texture | THREE.WebGLCubeRenderTarget | null ,
@@ -58,3 +59,5 @@ export interface Elements {
     groups:GroupsElements,
     elements:ElementInElements
 }
+
+export interface EventCallBack{(object:Creator):void}
