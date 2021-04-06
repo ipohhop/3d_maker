@@ -6,8 +6,18 @@ import React from 'react'
 
 // local
 import {creatScene} from "./scene&camera";
-import {Camera, Elements, EventCallBack, Grid, Light, SceneSettings} from "./threejsTypes";
-import {Object3D} from "three";
+import {
+    AddEvent,
+    Camera,
+    Elements,
+    Event,
+    EventItem,
+    EventTarget,
+    Grid,
+    Light, RemoveEvent,
+    SceneSettings
+} from "./threejsTypes";
+
 
 //  !! function for creat canvas object
 
@@ -89,8 +99,9 @@ export class Creator extends BaseCreator {
     addLights: (lights: (Light | Light[])) => void;
     addGrid: (grid: (Grid | Grid[])) => void;
     settingScene: (objectSettings: SceneSettings) => void;
-    tornPerspectiveCamera: (aspect?: number, near?: number, far?: number, x?: number, y?: number, z?: number) => void;
     addElement: (element: (THREE.Mesh | THREE.Mesh[] | THREE.Group), name: string, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
+    tornPerspectiveCamera: (position?: [x: number, y: number, z: number], rotation?: [x: number, y: number, z: number], aspect?: number, near?: number, far?: number) => void;
+
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
@@ -147,6 +158,7 @@ export class Creator extends BaseCreator {
                 ? this.scene.add(...lights)
                 : this.scene.add(lights);
         }
+
         // method for add grid in scene
         this.addGrid = (grid: Grid | Grid[]) => {
             grid instanceof Array
@@ -164,62 +176,150 @@ export class Creator extends BaseCreator {
         }
 
         // method for setting parameters perspective camera
-        this.tornPerspectiveCamera = (aspect?: number, near?: number, far?: number, x?: number, y?: number, z?: number) => {
+        this.tornPerspectiveCamera = (position?: [x: number, y: number, z: number], rotation?: [x: number, y: number, z: number], aspect?: number, near?: number, far?: number) => {
             if (this.camera instanceof THREE.PerspectiveCamera) {
                 if (aspect) this.camera.aspect = aspect
                 if (near === 0 || near) this.camera.near = near
                 if (far === 0 || far) this.camera.far = far
-                if (x === 0 || x) this.camera.position.x = x
-                if (y === 0 || y) this.camera.position.y = y
-                if (z === 0 || z) this.camera.position.z = z
+                if (!(position === undefined)) this.camera.position.set(...position)
+                if (!(rotation === undefined)) this.camera.rotation.set(...rotation)
             }
         }
     }
 }
 
 export class EventBackgroundCanvas extends Creator {
-    // private eventClick: () => void;
-    clickOnMonitor: () => void;
+
+    clickOnMonitor: () => void
+    private events: { [eventName: string]: EventItem }
+    clickOnRobot: () => void;
+
+
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
         this.width = width
         this.height = height
         this.camera = camera
-        // this.events = {}
+        this.events = {}
+
+        //method for creat events
+
+        // this.creatEventClick = (elementTarget: THREE.Group | THREE.Mesh, callback: EventCallBack, eventName: string, addEvent: boolean = true) => {
+        //     let eventObject: EventItem
+        //     eventObject = {
+        //         eventTargets: {},
+        //         addDOMElement: (element: THREE.Group | THREE.Mesh, eventTargets = eventObject.eventTargets, addEvent: boolean = true) => {
+        //             eventTargets[element.name] = element
+        //             if (addEvent) (<HTMLCanvasElement>this.canvas).addEventListener("click", eventObject.event, false);
+        //         },
+        //         _event: (event: any) => {
+        //             let intersects = getIntersects(event.layerX, event.layerY, this.camera, <THREE.Group>this.elements.elements.planeBack, this.width, this.height)
+        //             let object = ()=>{
         //
+        //             }
+        //         },
+        //         addEvent: () => {
         //
-        // this.addEventClick=(element:THREE.Group | THREE.Mesh,callbackTrue:EventCallBack ,callbackFalse?:EventCallBack)=>{
+        //         },
+        //         removeEvent: RemoveEvent
+        //     }
         //
         // }
+        //
 
-
-        this.clickOnMonitor=()=>{
-            let selectedObject = null;
-
+        this.clickOnMonitor = () => {
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
                 // @ts-ignore
-                let intersects = getIntersects(event.layerX, event.layerY , this.camera,<THREE.Group>this.elements.elements.planeBack,this.width,this.height);
-                if (intersects.length > 0) console.log(111)
+                let intersects = getIntersects(event.layerX, event.layerY, this.camera, <THREE.Group>this.elements.elements.planeBack, this.width, this.height);
+                console.log(intersects)
+                if (intersects.length > 0) this.tornPerspectiveCamera([-0.5, 1.72, 0.33], [-0.1, 0, 0])
             }
-
-            let raycaster = new THREE.Raycaster();
-            let mouseVector = new THREE.Vector2();
-
-            function getIntersects(x:number, y:number , camera : Camera ,object :THREE.Group | THREE.Mesh ,width:number,height:number) {
-                let Crx = (x / width) * 2 - 1;
-                let Cry = -((y) / height) * 2 + 1;
-
-                mouseVector.set(Crx, Cry);
-
-                raycaster.setFromCamera(mouseVector,<THREE.PerspectiveCamera | THREE.OrthographicCamera>camera);
-
-                // cube - объект проверяемый на пересечение с узлом
-                return raycaster.intersectObject(object, true);
-            }
-
             (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
         }
 
+        this.clickOnRobot = () => {
+            const onDocumentMouseClick = (event: any) => {
+                event.preventDefault();
+
+                // @ts-ignore
+                let intersects = getIntersects(event.layerX, event.layerY, this.camera, <THREE.Group>this.elements.groups.robot, this.width, this.height);
+
+                if (intersects.length > 0) {
+                    // Create an AnimationMixer, and get the list of AnimationClip instances
+                    // Создаем AnimationMixer и получаем список экземпляров AnimationClip
+                    const mixer = new THREE.AnimationMixer(<THREE.Group>this.elements.groups.robot);
+
+                    // @ts-ignore
+                    const clips = <THREE.Group>this.elements.groups.robot.animations;
+
+                    // Play a specific animation (проигрываем конкретную анимацию)
+                    // @ts-ignore
+                    const clip = THREE.AnimationClip.findByName(clips, 'Dance');
+                    const action = mixer.clipAction(clip);
+                    action.play()
+                    console.log(action)
+
+                }
+            }
+            (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
+        }
     }
 }
+
+
+// function for creat raycaster object (объект пересечения с элементом)
+function getIntersects(x: number, y: number, camera: Camera, object: THREE.Group | THREE.Mesh, width: number, height: number) {
+
+    let raycaster = new THREE.Raycaster();
+    let mouseVector = new THREE.Vector2();
+
+    let Crx = (x / width) * 2 - 1;
+    let Cry = -((y) / height) * 2 + 1;
+
+    mouseVector.set(Crx, Cry);
+
+    raycaster.setFromCamera(mouseVector, <THREE.PerspectiveCamera | THREE.OrthographicCamera>camera);
+
+    // object - объект проверяемый на пересечение с узлом
+    return raycaster.intersectObject(object, true);
+}
+
+
+// moveUp.addEventListener("click", onButtonClick);
+//
+// let spherical = new THREE.Spherical();
+// let startPos = new THREE.Vector3();
+// let endPos = new THREE.Vector3();
+// let axis = new THREE.Vector3();
+// let tri = new THREE.Triangle();
+//
+// function onButtonClick(event){
+//     spherical.setFromVector3(camera.position);
+//     spherical.phi = 0;
+//     spherical.makeSafe(); // important thing, see the docs for what it does
+//     endPos.setFromSpherical(spherical);
+//
+//     startPos.copy(camera.position);
+//
+//     tri.set(endPos, scene.position, startPos);
+//     tri.getNormal(axis);
+//
+//     let angle = startPos.angleTo(endPos);
+//
+//     let value = {value: 0};
+//     gsap.to(value, {value: 1,
+//         duration: 2,
+//         onUpdate: function(){
+//             camera.position.copy(startPos).applyAxisAngle(axis, angle * value.value);
+//             controls.update();
+//         },
+//         onStart: function(){
+//             moveUp.disabled = true;
+//         },
+//         onComplete: function(){
+//             moveUp.disabled = false;
+//         }
+//     })
+//         .play();/**/
+// }

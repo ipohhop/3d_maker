@@ -9,6 +9,7 @@ import {creatPerspectiveCamera} from "../../threejs/scene&camera";
 import {Creator, EventBackgroundCanvas} from "../../threejs/root";
 import {lightThreePoints, planeCreator} from "../../threejs/otherConstructors";
 import "./backCanvas.scss"
+import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 
 
 interface OwnProps {
@@ -34,8 +35,11 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
         canvas.current.startWindowResize()
         return canvas.current.stopWindowResize
     }, [])
+
     useEffect(() => {
-        canvas.current.addElement(planeCreator(0.29, 0.21, 1, 1), "planeBack", false, -1.1, 1.68, 1)
+        let eventElement = (planeCreator(0.82, 0.54, 1, 1))
+        eventElement.name="planeBack"
+        canvas.current.addElement(eventElement, "planeBack", false, -0.5, 1.68, 0)
     }, [])
 
     useEffect(() => {
@@ -46,9 +50,15 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
             console.error(error)
         })
     }, [])
-
+    // node_modules/three/examples/js/libs/draco
     useEffect(() => {
         const loader = new GLTFLoader();
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath( '../node_modules/three/examples/js/libs/draco' );
+        loader.setDRACOLoader( dracoLoader );
+
+
+
         loader.load('models/RobotExpressive.glb', function (gltf) {
             const element = gltf.scene
             element.receiveShadow=true
@@ -56,36 +66,20 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
             element.scale.set(0.1,0.1,0.1)
             element.position.set(-1.45,1.3,0)
             element.rotateY(0.3)
+            element.name="robot"
 
-            canvas.current.addElement(gltf.scene, "robot")
+            element.animations=gltf.animations
+            // console.log(element)
+
+            canvas.current.addElement(element, "robot")
         }, undefined, function (error) {
             console.error(error)
         })
     }, [])
 
-    // useEffect(() => {
-        // const ktx2Loader = new KTX2Loader()
-        //     .setTranscoderPath( 'js/libs/basis/' )
-        //     .detectSupport( renderer );
-        //
-        // const loader = new GLTFLoader();
-        // loader.setKTX2Loader( ktx2Loader );
-        // loader.setMeshoptDecoder( MeshoptDecoder );
-    //     loader.load('models/coffeemat.glb', function (gltf) {
-    //         const element = gltf.scene
-    //         console.log(element)
-    //         element.position.set(-1,1.3,0)
-    //         element.rotateY(0.3)
-    //
-    //         canvas.current.addElement(gltf.scene, "coffee")
-    //     }, undefined, function (error) {
-    //         console.error(error)
-    //     })
-    // }, [])
-
-
     useEffect(()=>{
         canvas.current.clickOnMonitor()
+        canvas.current.clickOnRobot()
     },[])
 
 

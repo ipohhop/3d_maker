@@ -74,16 +74,13 @@ export function generationCubs(maxWidth: number, maxHeight: number) {
     function widthGeneration(maxWidth: number, height: number) {
         let perimeter = []
         for (let i = 0; i < maxWidth; i++) {
-            for (let j = 0; j < maxWidth; j++) {
-                perimeter.push(creatBox(i, j, height))
-            }
+            for (let j = 0; j < maxWidth; j++) perimeter.push(creatBox(i, j, height))
         }
         return perimeter
     }
 
-    for (let i = 0; i < maxHeight; i++) {
-        array.push(...widthGeneration(maxWidth, i))
-    }
+    for (let i = 0; i < maxHeight; i++) array.push(...widthGeneration(maxWidth, i))
+
     return array
 }
 

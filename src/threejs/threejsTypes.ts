@@ -60,4 +60,20 @@ export interface Elements {
     elements:ElementInElements
 }
 
-export interface EventCallBack{(object:Creator):void}
+export type EventTarget = {
+    [name:string]: THREE.Group | THREE.Mesh;
+};
+
+export interface Event{():void}
+export interface AddDOMElement{(element:THREE.Group | THREE.Mesh,eventTargets:EventTarget,addEvent?:boolean):void}
+export interface AddEvent{(array:EventTarget):void}
+export interface RemoveEvent{(array:EventTarget):void}
+
+
+export  interface EventItem{
+    eventTargets:EventTarget,
+    addDOMElement:AddDOMElement,
+    event:Event,
+    addEvent:AddEvent,
+    removeEvent:RemoveEvent
+}
