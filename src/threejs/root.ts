@@ -17,9 +17,10 @@ import {
     Light, RemoveEvent,
     SceneSettings
 } from "./threejsTypes";
+import gsap from 'gsap';
 
 
-//  !! function for creat canvas object
+//  base class creator
 
 export class BaseCreator {
 
@@ -91,7 +92,7 @@ export class BaseCreator {
 }
 
 
-//
+// class for creat full object
 
 export class Creator extends BaseCreator {
 
@@ -188,12 +189,15 @@ export class Creator extends BaseCreator {
     }
 }
 
+// class for test
+
+
 export class EventBackgroundCanvas extends Creator {
 
     clickOnMonitor: () => void
     private events: { [eventName: string]: EventItem }
     clickOnRobot: () => void;
-
+    private cameraEventOnFocus: () => void;
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
@@ -233,7 +237,10 @@ export class EventBackgroundCanvas extends Creator {
                 // @ts-ignore
                 let intersects = getIntersects(event.layerX, event.layerY, this.camera, <THREE.Group>this.elements.elements.planeBack, this.width, this.height);
                 console.log(intersects)
-                if (intersects.length > 0) this.tornPerspectiveCamera([-0.5, 1.72, 0.33], [-0.1, 0, 0])
+                if (intersects.length > 0) {
+                    this.cameraEventOnFocus()
+                    // this.tornPerspectiveCamera([-0.5, 1.72, 0.33], [-0.1, 0, 0])
+                }
             }
             (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
         }
@@ -257,12 +264,48 @@ export class EventBackgroundCanvas extends Creator {
                     // @ts-ignore
                     const clip = THREE.AnimationClip.findByName(clips, 'Dance');
                     const action = mixer.clipAction(clip);
-                    action.play()
                     console.log(action)
+                    console.log(action instanceof THREE.AnimationClip)
+                    action.play()
+
 
                 }
             }
             (<HTMLCanvasElement>this.canvas).addEventListener("click", onDocumentMouseClick, false);
+        }
+
+        this.cameraEventOnFocus=()=>{
+            let testVevtor = new THREE.Vector3(-0.5, 1.72, 0.33);
+            let spherical = new THREE.Spherical();
+            let startPos = new THREE.Vector3();
+            let endPos = new THREE.Vector3();
+            let axis = new THREE.Vector3();
+            let tri = new THREE.Triangle();
+
+            spherical.setFromVector3(testVevtor);
+            spherical.phi =0;
+            spherical.makeSafe(); // important thing, see the docs for what it does
+            endPos.setFromSpherical(spherical);
+
+            startPos.copy(camera.position);
+
+            tri.set(endPos, this.scene.position, startPos);
+            tri.getNormal(axis);
+
+
+            // получаем угол в радианах между startPos и endPos
+            let angle = startPos.angleTo(endPos);
+
+            let value = {value: 0};
+            gsap.to(value, {value: 1,
+                duration: 3,
+                onUpdate: function(){
+
+                    camera.position.copy(startPos).applyAxisAngle(axis, angle * value.value);
+                    console.log(camera.position.copy(startPos).applyAxisAngle(axis, angle * value.value))
+                },
+            })
+                .play();
         }
     }
 }
@@ -286,15 +329,23 @@ function getIntersects(x: number, y: number, camera: Camera, object: THREE.Group
 }
 
 
-// moveUp.addEventListener("click", onButtonClick);
-//
-// let spherical = new THREE.Spherical();
-// let startPos = new THREE.Vector3();
-// let endPos = new THREE.Vector3();
-// let axis = new THREE.Vector3();
-// let tri = new THREE.Triangle();
-//
+
+
+
+
+
 // function onButtonClick(event){
+//
+//
+//
+//     let spherical = new THREE.Spherical();
+//     let startPos = new THREE.Vector3();
+//     let endPos = new THREE.Vector3();
+//     let axis = new THREE.Vector3();
+//     let tri = new THREE.Triangle();
+//
+//
+//
 //     spherical.setFromVector3(camera.position);
 //     spherical.phi = 0;
 //     spherical.makeSafe(); // important thing, see the docs for what it does
@@ -312,14 +363,62 @@ function getIntersects(x: number, y: number, camera: Camera, object: THREE.Group
 //         duration: 2,
 //         onUpdate: function(){
 //             camera.position.copy(startPos).applyAxisAngle(axis, angle * value.value);
-//             controls.update();
+//             // controls.update();
 //         },
-//         onStart: function(){
-//             moveUp.disabled = true;
-//         },
-//         onComplete: function(){
-//             moveUp.disabled = false;
-//         }
+//         // onStart: function(){
+//         //     moveUp.disabled = true;
+//         // },
+//         // onComplete: function(){
+//         //     moveUp.disabled = false;
+//         // }
 //     })
 //         .play();/**/
+// }
+//
+//
+
+
+
+
+// пример анимации с TWEEN
+
+// function cameraToMarker(marker) {
+//     const currentCamPosition = {x: marker.cameraPositionX, y: camera.position.y, z: marker.cameraPositionZ};
+//     const storedMarkerPosition = new THREE.Vector3(marker.positionX, marker.positionY, marker.positionZ);
+//     const newCameraTarget = getNewPointOnVector(currentCamPosition, storedMarkerPosition);
+//     const markerPosition = new THREE.Vector3(...Object.values(newCameraTarget));
+//     const startRotation = new THREE.Euler().copy(camera.rotation);
+//     camera.lookAt(storedMarkerPosition);
+//     const endRotation = new THREE.Euler().copy(camera.rotation);
+//     camera.rotation.copy(startRotation);
+//     new TWEEN.Tween(camera.rotation)
+//         .to(
+//             {
+//                 x: endRotation.x,
+//                 y: endRotation.y,
+//                 z: endRotation.z,
+//             }, 500)
+//         .easing(TWEEN.Easing.Quadratic.InOut)
+//         .onComplete(() => {
+//             new TWEEN.Tween(camera.position)
+//                 .to({
+//                     x: marker.cameraPositionX,
+//                     y: camera.position.y,
+//                     z: marker.cameraPositionZ,
+//                 })
+//                 .easing(TWEEN.Easing.Quadratic.InOut)
+//                 .onUpdate(() => {
+//                     camera.lookAt(storedMarkerPosition);
+//                 })
+//                 .onComplete(() => {
+//                     camera.lookAt(storedMarkerPosition);
+//                     radius = Math.hypot(...Object.values(markerPosition));
+//                     phi = Math.acos(markerPosition.y / radius);
+//                     theta = Math.atan2(markerPosition.z, markerPosition.x);
+//                     lon = THREE.Math.radToDeg(theta);
+//                     lat = 90 - THREE.Math.radToDeg(phi);
+//                 })
+//                 .start();
+//         })
+//         .start();
 // }

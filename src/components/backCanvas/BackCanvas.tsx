@@ -3,10 +3,9 @@ import React, {FunctionComponent, useEffect, useMemo, useRef, useState} from 're
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 
-
 //local
 import {creatPerspectiveCamera} from "../../threejs/scene&camera";
-import {Creator, EventBackgroundCanvas} from "../../threejs/root";
+import {EventBackgroundCanvas} from "../../threejs/root";
 import {lightThreePoints, planeCreator} from "../../threejs/otherConstructors";
 import "./backCanvas.scss"
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
@@ -29,19 +28,23 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
 
     useEffect(() => canvas.current.init(canvasContainer, false), [])
 
+    // add Lights
     useEffect(() => canvas.current.addLights(lightThreePoints()), [])
 
+    // add window resize effect
     useEffect(() => {
         canvas.current.startWindowResize()
         return canvas.current.stopWindowResize
     }, [])
 
+    // add plane element for event on monitor
     useEffect(() => {
         let eventElement = (planeCreator(0.82, 0.54, 1, 1))
-        eventElement.name="planeBack"
+        eventElement.name = "planeBack"
         canvas.current.addElement(eventElement, "planeBack", false, -0.5, 1.68, 0)
     }, [])
 
+    // add background GLTF 3d object
     useEffect(() => {
         const loader = new GLTFLoader();
         loader.load('models/back/scene.gltf', function (gltf) {
@@ -50,26 +53,24 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
             console.error(error)
         })
     }, [])
-    // node_modules/three/examples/js/libs/draco
+
+    // add robot GLTF 3d object
     useEffect(() => {
         const loader = new GLTFLoader();
+        // DRACOLoader for load
         const dracoLoader = new DRACOLoader();
-        dracoLoader.setDecoderPath( '../node_modules/three/examples/js/libs/draco' );
-        loader.setDRACOLoader( dracoLoader );
-
-
-
+        dracoLoader.setDecoderPath('../node_modules/three/examples/js/libs/draco');
+        loader.setDRACOLoader(dracoLoader);
         loader.load('models/RobotExpressive.glb', function (gltf) {
             const element = gltf.scene
-            element.receiveShadow=true
-            element.castShadow=true
-            element.scale.set(0.1,0.1,0.1)
-            element.position.set(-1.45,1.3,0)
+            element.receiveShadow = true
+            element.castShadow = true
+            element.scale.set(0.1, 0.1, 0.1)
+            element.position.set(-1.45, 1.3, 0)
             element.rotateY(0.3)
-            element.name="robot"
+            element.name = "robot"
 
-            element.animations=gltf.animations
-            // console.log(element)
+            element.animations = gltf.animations
 
             canvas.current.addElement(element, "robot")
         }, undefined, function (error) {
@@ -77,10 +78,11 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
         })
     }, [])
 
-    useEffect(()=>{
+    //add onclick events on plane monitor and robot
+    useEffect(() => {
         canvas.current.clickOnMonitor()
         canvas.current.clickOnRobot()
-    },[])
+    }, [])
 
 
     return (
