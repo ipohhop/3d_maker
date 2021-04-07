@@ -26,7 +26,7 @@ export class BaseCreator {
 
     protected scene: THREE.Scene;
     protected renderer: THREE.WebGLRenderer;
-    protected startAnimation: () => void;
+
     protected camera: Camera;
     protected controls: OrbitControls | undefined;
     protected width: number;
@@ -37,6 +37,9 @@ export class BaseCreator {
     init: (container: React.MutableRefObject<any>, orbitControl?: boolean) => void;
     startWindowResize: () => void;
     stopWindowResize: () => void;
+    private clock: THREE.Clock;
+    private tick: () => void;
+    private startAnimation: () => void;
 
     constructor(camera: Camera, width: number, height: number) {
         this.camera = camera
@@ -44,6 +47,7 @@ export class BaseCreator {
         this.width = width
         this.height = height
         this.mountTime = true
+        this.clock = new THREE.Clock()
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
         })
@@ -79,6 +83,7 @@ export class BaseCreator {
         // start render
         this.startAnimation = () => {
             (<THREE.WebGLRenderer>this.renderer).render(this.scene, <THREE.PerspectiveCamera>this.camera);
+
             window.requestAnimationFrame(this.startAnimation);
         };
 
@@ -87,6 +92,19 @@ export class BaseCreator {
             if (!(camera instanceof THREE.CubeCamera)) camera.updateProjectionMatrix();
 
             this.renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        this.tick = () => {
+            // only call the getDelta function once per frame!
+            const delta = this.clock.getDelta();
+
+            console.log(
+                `The last frame rendered in ${delta * 1000} milliseconds`,
+            );
+
+            // for (const object of this.updatables) {
+            //     object.tick(delta);
+            // }
         }
     }
 }
@@ -267,6 +285,7 @@ export class EventBackgroundCanvas extends Creator {
                     console.log(action)
                     console.log(action instanceof THREE.AnimationClip)
                     action.play()
+
 
 
                 }
