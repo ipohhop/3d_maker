@@ -3,6 +3,9 @@ import * as THREE from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import React from 'react'
 
+import Stats from "three/examples/jsm/libs/stats.module.js"
+
+
 
 // local
 import {creatScene} from "./scene&camera";
@@ -37,6 +40,7 @@ export class BaseCreator {
     private clock: THREE.Clock;
     private tick: () => void;
     private readonly startAnimation: () => void;
+    updatatable: [];
 
     constructor(camera: Camera, width: number, height: number) {
         this.camera = camera
@@ -45,6 +49,7 @@ export class BaseCreator {
         this.height = height
         this.mountTime = true
         this.clock = new THREE.Clock()
+        this.updatatable=[]
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
         })
@@ -81,6 +86,8 @@ export class BaseCreator {
         this.startAnimation = () => {
             (this.renderer as THREE.WebGLRenderer).render(this.scene, this.camera as THREE.PerspectiveCamera);
 
+            this.tick()
+
             window.requestAnimationFrame(this.startAnimation);
         };
 
@@ -95,13 +102,14 @@ export class BaseCreator {
             // only call the getDelta function once per frame!
             const delta = this.clock.getDelta();
 
-            console.log(
-                `The last frame rendered in ${delta * 1000} milliseconds`,
-            );
+            // console.log(
+            //     `The last frame rendered in ${delta * 1000} milliseconds`,
+            // );
 
-            // for (const object of this.updatables) {
-            //     object.tick(delta);
-            // }
+            for (const object of this.updatatable) {
+                // @ts-ignore
+                object.tick(delta);
+            }
         }
     }
 }
@@ -297,17 +305,24 @@ export class EventBackgroundCanvas extends Creator {
                 if (intersects.length > 0) {
                     // Create an AnimationMixer, and get the list of AnimationClip instances
                     // Создаем AnimationMixer и получаем список экземпляров AnimationClip
-                    const mixer = new THREE.AnimationMixer(this.elements.groups.robot as THREE.Group);
+                    const model = this.elements.groups.robot
+                    const mixer = new THREE.AnimationMixer(model);
 
-                    // @ts-ignore
-                    const clips = this.elements.groups.robot.animations as THREE.Group;
+                    const clips = model.animations
 
                     // Play a specific animation (проигрываем конкретную анимацию)
-                    // @ts-ignore
-                    const clip = THREE.AnimationClip.findByName(clips, 'Dance');
+                    const clip = clips[0]
+
                     const action = mixer.clipAction(clip);
 
+                    console.log(action)
                     action.play()
+
+                    // @ts-ignore
+                    model.tick = (delta:any)=>mixer.update(delta)
+                    // @ts-ignore
+                    this.updatatable.push(model)
+
                 }
             }
             (this.canvas as HTMLCanvasElement).addEventListener("click", onDocumentMouseClick, false);
