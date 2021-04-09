@@ -3,7 +3,6 @@ import * as THREE from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import React from 'react'
 
-import Stats from "three/examples/jsm/libs/stats.module.js"
 
 
 
@@ -38,9 +37,9 @@ export class BaseCreator {
     startWindowResize: () => void;
     stopWindowResize: () => void;
     private clock: THREE.Clock;
-    private tick: () => void;
+    private readonly tick: () => void;
     private readonly startAnimation: () => void;
-    updatatable: [];
+    updatable: Set<any>;
 
     constructor(camera: Camera, width: number, height: number) {
         this.camera = camera
@@ -49,7 +48,7 @@ export class BaseCreator {
         this.height = height
         this.mountTime = true
         this.clock = new THREE.Clock()
-        this.updatatable=[]
+        this.updatable=new Set()
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
         })
@@ -106,10 +105,10 @@ export class BaseCreator {
             //     `The last frame rendered in ${delta * 1000} milliseconds`,
             // );
 
-            for (const object of this.updatatable) {
-                // @ts-ignore
+            for (const object of Array.from(this.updatable.values())) {
                 object.tick(delta);
             }
+
         }
     }
 }
@@ -226,7 +225,7 @@ export class EventBackgroundCanvas extends Creator {
         active: string;
         onMonitor(): { rotation: { x: number; y: number; z: number }; position: { x: number; y: number; z: number }; time: number }
     };
-    private getIntersects: (x: number, y: number, camera: Camera, object: (THREE.Group | THREE.Mesh), width: number, height: number) => THREE.Intersection[];
+    private readonly getIntersects: (x: number, y: number, camera: Camera, object: (THREE.Group | THREE.Mesh), width: number, height: number) => THREE.Intersection[];
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
@@ -284,7 +283,7 @@ export class EventBackgroundCanvas extends Creator {
                 event.preventDefault();
 
                 let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, this.elements.elements.planeBack as THREE.Mesh, this.width, this.height);
-                console.log(intersects)
+
                 if (intersects.length > 0) {
                     if (this.cameraPositions.active === "room") {
                         this.cameraEventOnFocus(this.cameraPositions.onMonitor())
@@ -297,6 +296,10 @@ export class EventBackgroundCanvas extends Creator {
         }
 
         this.clickOnRobot = () => {
+
+            let montageScene = false
+            let badFace = 0
+
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
 
@@ -304,7 +307,7 @@ export class EventBackgroundCanvas extends Creator {
 
                 if (intersects.length > 0) {
                     // Create an AnimationMixer, and get the list of AnimationClip instances
-                    // Создаем AnimationMixer и получаем список экземпляров AnimationClip
+
                     const model = this.elements.groups.robot
                     const mixer = new THREE.AnimationMixer(model);
 
@@ -314,14 +317,14 @@ export class EventBackgroundCanvas extends Creator {
                     const clip = clips[0]
 
                     const action = mixer.clipAction(clip);
-
-                    console.log(action)
                     action.play()
+
 
                     // @ts-ignore
                     model.tick = (delta:any)=>mixer.update(delta)
-                    // @ts-ignore
-                    this.updatatable.push(model)
+
+                    this.updatable.add(model)
+
 
                 }
             }

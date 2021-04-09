@@ -71,6 +71,17 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
             element.name = "robot"
 
             element.animations = gltf.animations
+            // morphTargetDictionary
+            // console.log(element)
+            const face = element.getObjectByName( 'Head_4' )
+            element.getObjectByName( 'Head_4' )
+
+
+            console.log(face)
+            // @ts-ignore
+            face.morphTargetInfluences=[1,0,0]
+            // const expressions = Object.keys( );
+
 
             canvas.current.addElement(element, "robot")
         }, undefined, function (error) {
