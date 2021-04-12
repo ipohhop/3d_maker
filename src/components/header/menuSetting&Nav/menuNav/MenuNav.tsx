@@ -5,7 +5,6 @@ import React, {FunctionComponent, MutableRefObject} from 'react';
 import NavItem from "./NavItem";
 import "./menuNav.scss"
 import {useGlobalContext} from "../../../../App";
-import {Creator} from "../../../../threejs/root";
 import {ConstructorCanvas} from "../../../../threejs/constructorCanvas";
 
 
@@ -28,9 +27,8 @@ type Props = OwnProps;
 
 export type objectItem = {
     name: string,
-    event: () => any |void
+    event: () => any | void
 }
-
 
 
 const MenuNav: FunctionComponent<Props> = (props) => {
@@ -41,15 +39,19 @@ const MenuNav: FunctionComponent<Props> = (props) => {
 
     type menuItemsType = { name: string, event: () => any, optionsItems: objectItem[] | any[] }
 
-    const menuItems:menuItemsType[] = [
-        {name: "File", event: () => null,optionsItems:[]},
-        {name: "Edit", event: () => null,optionsItems:[]},
-        {name: "Insert", event: () => null,optionsItems:[{name:"iPhone",event:canvasObject.current.addIphone}]},
-        {name: "Background", event: () => null,optionsItems:[]},
-        {name: "Advanced", event: () => null,optionsItems:[]},
+    const menuItems: menuItemsType[] = [
+        {name: "File", event: () => null, optionsItems: []},
+        {name: "Edit", event: () => null, optionsItems: []},
+        {
+            name: "Insert", event: () => null, optionsItems: [
+                {name: "iPhone", event: canvasObject.current.addIphone},
+                {name: "iPad", event: canvasObject.current.addIpad},
+                {name: "Macbook", event: canvasObject.current.addMac}
+            ]
+        },
+        {name: "Background", event: () => null, optionsItems: []},
+        {name: "Advanced", event: () => null, optionsItems: []},
     ]
-
-
 
 
     return (
