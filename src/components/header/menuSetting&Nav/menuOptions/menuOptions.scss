@@ -31,3 +31,12 @@
  .option-module--options--1VaAT .option-module--option--1LMwC span {
   flex: 1 1;
 }
+
+ .option-module--disabled--2czkJ{
+   pointer-events: none;
+   color: #c5c5c5;
+   cursor: default;
+   svg{
+     fill: #c5c5c5;
+   }
+ }
