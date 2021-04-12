@@ -1,5 +1,5 @@
 //outer
-import React, {FunctionComponent, MutableRefObject} from 'react';
+import React, {FunctionComponent} from 'react';
 
 //local
 import "./menuNav.scss"

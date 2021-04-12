@@ -1,5 +1,5 @@
 // outer
-import React, {createContext, MutableRefObject, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, useContext, useMemo, useRef, useState} from 'react';
 
 // local
 import './App.css';
@@ -7,35 +7,27 @@ import Body from './components/body/Body';
 import Header from "./components/header/Header";
 import BackCanvas from "./components/backCanvas/BackCanvas";
 import {creatPerspectiveCamera} from "./threejs/scene&camera";
-import {Creator} from "./threejs/root";
 import {ConstructorCanvas} from "./threejs/constructorCanvas";
+import {InsertState} from "./classConstructors";
 
 
 
 
 
 type GlobalContent = {
-    canvas: ConstructorCanvas | MutableRefObject<ConstructorCanvas>,
-    setWidth: React.Dispatch<React.SetStateAction<number>> | undefined,
-    setHeight: React.Dispatch<React.SetStateAction<number>> | undefined,
-    state: ConstructorCanvas[] | MutableRefObject<ConstructorCanvas>[]
+    canvas: InsertState,
+    setWidth: React.Dispatch<React.SetStateAction<number>> | number,
+    setHeight: React.Dispatch<React.SetStateAction<number>> | number,
 }
 
 
 const MyGlobalContext = createContext<GlobalContent>({
-    canvas: new ConstructorCanvas(creatPerspectiveCamera(500, 500, 0, 0, 26.5), 500, 500),
-    setWidth: undefined,
-    setHeight: undefined,
-    state: [new ConstructorCanvas(creatPerspectiveCamera(500, 500, 0, 0, 26.5), 500, 500)],
+    canvas: new InsertState(new ConstructorCanvas(creatPerspectiveCamera(500, 500, 0, 0, 26.5), 500, 500)),
+    setWidth: 500,
+    setHeight: 500,
 })
 
 export const useGlobalContext = () => useContext(MyGlobalContext)
-
-
-
-
-
-
 
 
 function App() {
@@ -64,10 +56,10 @@ function App() {
 
                 <MyGlobalContext.Provider
                     value={{
-                    canvas: canvas,
+                    canvas: new InsertState(canvas.current),
                     setWidth: setWidth,
                     setHeight: setHeight,
-                    state: [canvas],}}>
+                    }}>
 
                     <Header/>
                     <Body/>

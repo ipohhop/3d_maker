@@ -1,11 +1,10 @@
 // outer
-import React, {FunctionComponent, MutableRefObject, useEffect, useRef} from 'react';
+import React, {FunctionComponent, useEffect, useRef} from 'react';
 
 
 
 // local
 
-import {Creator} from "../../../../threejs/root";
 import {lightThreePoints} from "../../../../threejs/otherConstructors";
 import {useGlobalContext} from "../../../../App";
 
@@ -20,11 +19,11 @@ const CanvasElement: FunctionComponent<Props> = () => {
 
     const context = useGlobalContext()
 
-    let canvasObject = context.canvas as MutableRefObject<Creator>
+    let canvasObject = context.canvas.activeCanvas
 
-    useEffect(() => canvasObject.current.init(canvasContainer, true), [])
+    useEffect(() => canvasObject.init(canvasContainer, true), [canvasObject])
 
-    useEffect(() => canvasObject.current.addLights(lightThreePoints()), [])
+    useEffect(() => canvasObject.addLights(lightThreePoints()), [canvasObject])
 
 
     return (

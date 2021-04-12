@@ -1,12 +1,10 @@
 // outer
-import React, {FunctionComponent, MutableRefObject, useState} from 'react';
+import React, {FunctionComponent, useState} from 'react';
 
 
 // local
 import {useGlobalContext} from "../../../../../App";
-import {ConstructorCanvas} from "../../../../../threejs/constructorCanvas";
-import MenuOptions from "../../menuOptions/MenuOptions";
-import {log} from "util";
+
 
 
 interface OwnProps {
@@ -18,12 +16,12 @@ const EditMenuItem: FunctionComponent<Props> = (props) => {
     const [optionsState, setOptionsState] = useState(false)
 
     const context = useGlobalContext()
-    let canvasObject = context.canvas as MutableRefObject<ConstructorCanvas>
+    let canvasObject = context.canvas.activeCanvas
 
     const options = [
-        {name: "iPhone", event: canvasObject.current.addIphone},
-        {name: "iPad", event: canvasObject.current.addIpad},
-        {name: "Macbook", event: canvasObject.current.addMac}
+        {name: "iPhone", event: canvasObject.addIphone},
+        {name: "iPad", event: canvasObject.addIpad},
+        {name: "Macbook", event: canvasObject.addMac}
     ]
 
 
