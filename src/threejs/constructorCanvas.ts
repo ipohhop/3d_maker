@@ -30,6 +30,7 @@ export class ConstructorCanvas extends Creator {
 
             })
         }
+
         this.addIpad=()=> {
             const loader = new GLTFLoader()
             const pathIphone = 'models/apple/ipad/scene.gltf'

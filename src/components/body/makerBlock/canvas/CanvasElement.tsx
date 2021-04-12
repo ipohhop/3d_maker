@@ -1,6 +1,6 @@
 // outer
-import React, {FunctionComponent, MutableRefObject, useEffect, useMemo, useRef, useState} from 'react';
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import React, {FunctionComponent, MutableRefObject, useEffect, useRef} from 'react';
+
 
 
 // local
@@ -25,8 +25,6 @@ const CanvasElement: FunctionComponent<Props> = () => {
     useEffect(() => canvasObject.current.init(canvasContainer, true), [])
 
     useEffect(() => canvasObject.current.addLights(lightThreePoints()), [])
-
-
 
 
     return (

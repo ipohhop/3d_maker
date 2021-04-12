@@ -6,18 +6,11 @@ import NavItem from "./NavItem";
 import "./menuNav.scss"
 import {useGlobalContext} from "../../../../App";
 import {ConstructorCanvas} from "../../../../threejs/constructorCanvas";
-
-
-type creatItem = {
-    event: () => any,
-    name: string
-}
-
-function creatOption(objects: creatItem[]) {
-    return <div>
-        {objects.map((item, index) => <div onClick={item.event}> {item.name}</div>)}
-    </div>
-}
+import FileMenuItem from "./menuItems/FileMenuItem";
+import EditMenuItem from "./menuItems/EditMenuItem";
+import InsertMenuItem from "./menuItems/InsertMenuItem";
+import BackgroundMenuItem from "./menuItems/BackgroundMenuItem";
+import AdvancedMenuItem from "./menuItems/AdvancedMenuItem";
 
 
 interface OwnProps {
@@ -57,9 +50,11 @@ const MenuNav: FunctionComponent<Props> = (props) => {
     return (
         <nav className="header__nav">
             <ul>
-                {menuItems.map((item, index) => {
-                    return <NavItem key={index} name={item.name} event={item.event} optionsItems={item.optionsItems}/>
-                })}
+                <FileMenuItem/>
+                <EditMenuItem/>
+                <InsertMenuItem/>
+                <BackgroundMenuItem/>
+                <AdvancedMenuItem/>
             </ul>
         </nav>
     );
