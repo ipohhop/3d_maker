@@ -1,9 +1,7 @@
 // outer
 import * as THREE from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
-import React from 'react'
-
-
+import React, {Dispatch, SetStateAction} from 'react'
 
 
 // local
@@ -40,6 +38,7 @@ export class BaseCreator {
     private readonly tick: () => void;
     private readonly startAnimation: () => void;
     updatable: Set<any>;
+    clone: () => any;
 
     constructor(camera: Camera, width: number, height: number) {
         this.camera = camera
@@ -48,10 +47,16 @@ export class BaseCreator {
         this.height = height
         this.mountTime = true
         this.clock = new THREE.Clock()
-        this.updatable=new Set()
+        this.updatable = new Set()
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
         })
+
+        this.clone = () => {
+            const clone = Object.create(this);
+
+            return clone;
+        }
 
         this.init = (container: React.MutableRefObject<any>, orbitControl: boolean = true) => {
             // enter size render window
@@ -105,7 +110,11 @@ export class BaseCreator {
             //     `The last frame rendered in ${delta * 1000} milliseconds`,
             // );
 
-            for (const object of Array.from(this.updatable.values())) {
+            // for (const object of Array.from(this.updatable.values())) {
+            //     object.tick(delta);
+            // }
+
+            for (const object of this.updatable) {
                 object.tick(delta);
             }
 
@@ -215,7 +224,7 @@ export class Creator extends BaseCreator {
 
 export class EventBackgroundCanvas extends Creator {
 
-    clickOnMonitor: () => void
+    clickOnMonitor: (callbackProps: React.Dispatch<React.SetStateAction<boolean>>) => void
     private events: { [eventName: string]: EventItem }
     clickOnRobot: () => void;
 
@@ -227,6 +236,7 @@ export class EventBackgroundCanvas extends Creator {
     };
     private readonly getIntersects: (x: number, y: number, camera: Camera, object: (THREE.Group | THREE.Mesh), width: number, height: number) => THREE.Intersection[];
 
+
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
         this.width = width
@@ -235,20 +245,20 @@ export class EventBackgroundCanvas extends Creator {
         this.events = {}
         this.cameraPositions = {
             active: "room",
-            onRoom(time:number=3) {
+            onRoom(time: number = 3) {
                 this.active = "room"
                 return {
                     position: {x: -1.4, y: 1.7, z: 1.5},
                     rotation: {x: 0, y: -0.5, z: 0},
-                    time:time
+                    time: time
                 }
             },
-            onMonitor(time:number=3) {
+            onMonitor(time: number = 3) {
                 this.active = "monitor"
                 return {
                     position: {x: -0.5, y: 1.72, z: 0.33},
-                    rotation: {x:-0.1, y: 0.0065 , z: 0.005},
-                    time:time
+                    rotation: {x: -0.1, y: 0.0065, z: 0.005},
+                    time: time
                 }
             }
         }
@@ -278,13 +288,16 @@ export class EventBackgroundCanvas extends Creator {
         // }
         //
 
-        this.clickOnMonitor = () => {
+        this.clickOnMonitor = (callbackProps: Dispatch<SetStateAction<boolean>>) => {
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
 
                 let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, this.elements.elements.planeBack as THREE.Mesh, this.width, this.height);
 
                 if (intersects.length > 0) {
+                    setTimeout(() => {
+                        callbackProps(prev => !prev)
+                    }, 3000)
                     if (this.cameraPositions.active === "room") {
                         this.cameraEventOnFocus(this.cameraPositions.onMonitor())
                         return
@@ -297,8 +310,8 @@ export class EventBackgroundCanvas extends Creator {
 
         this.clickOnRobot = () => {
 
-            let montageScene = false
-            let badFace = 0
+            // let montageScene = false
+            // let badFace = 0
 
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
@@ -321,7 +334,7 @@ export class EventBackgroundCanvas extends Creator {
 
 
                     // @ts-ignore
-                    model.tick = (delta:any)=>mixer.update(delta)
+                    model.tick = (delta: any) => mixer.update(delta)
 
                     this.updatable.add(model)
 
@@ -331,7 +344,7 @@ export class EventBackgroundCanvas extends Creator {
             (this.canvas as HTMLCanvasElement).addEventListener("click", onDocumentMouseClick, false);
         }
 
-        this.cameraEventOnFocus = (finishPosition:CameraPositionProps) => {
+        this.cameraEventOnFocus = (finishPosition: CameraPositionProps) => {
 
             // start positions
             let {x: PosX, y: PosY, z: PosZ} = this.camera.position
@@ -362,7 +375,7 @@ export class EventBackgroundCanvas extends Creator {
 
         // function for creat raycaster object (объект пересечения с элементом)
 
-        this.getIntersects=(x: number, y: number, camera: Camera, object: THREE.Group | THREE.Mesh, width: number, height: number) =>{
+        this.getIntersects = (x: number, y: number, camera: Camera, object: THREE.Group | THREE.Mesh, width: number, height: number) => {
 
             let raycaster = new THREE.Raycaster();
             let mouseVector = new THREE.Vector2();

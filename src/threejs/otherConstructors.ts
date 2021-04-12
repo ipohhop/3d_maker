@@ -19,7 +19,7 @@ export function lightThreePoints() {
 export function versionTwo() {
     const skyColor = 0xB1E1FF;  // light blue
     const groundColor = 0xB97A20;  // brownish orange
-    const intensity = 1;
+    const intensity = 5;
 
     return new THREE.HemisphereLight(skyColor, groundColor, intensity);
 }

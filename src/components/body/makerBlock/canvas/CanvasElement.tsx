@@ -1,13 +1,13 @@
 // outer
-import React, {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
+import React, {FunctionComponent, MutableRefObject, useEffect, useMemo, useRef, useState} from 'react';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 
-
 // local
-import {creatPerspectiveCamera} from "../../../../threejs/scene&camera";
+
 import {Creator} from "../../../../threejs/root";
-import {generationCubs, lightThreePoints} from "../../../../threejs/otherConstructors";
+import {lightThreePoints} from "../../../../threejs/otherConstructors";
+import {useGlobalContext} from "../../../../App";
 
 
 interface OwnProps {
@@ -18,32 +18,53 @@ type Props = OwnProps;
 const CanvasElement: FunctionComponent<Props> = () => {
     const canvasContainer = useRef(null)
 
-    const [width, setWidth] = useState(600)
-    const [height, setHeight] = useState(600)
+    const context = useGlobalContext()
 
-    const camera = useMemo(() => creatPerspectiveCamera(width, height, 0, 0, 0), [width, height])
+    let canvasObject = context.canvas as MutableRefObject<Creator>
 
-    const canvas = useRef(new Creator(camera, width, height))
+    useEffect(() => canvasObject.current.init(canvasContainer, true), [])
 
-    useEffect(() => {
-        canvas.current.init(canvasContainer, false)
-    }, [])
+    useEffect(() => canvasObject.current.addLights(lightThreePoints()), [])
 
     useEffect(() => {
-        canvas.current.addLights(lightThreePoints())
+        const loader = new GLTFLoader();
+
+        let pathIpad = 'models/apple/ipad/scene.gltf'
+        // let pathIphone = 'models/apple/iphone11/scene.gltf'
+
+        loader.load(pathIpad, function (gltf) {
+            const element = gltf.scene
+            element.scale.set(0.5, 0.5, 0.5)
+            element.name = "ipad"
+
+
+            canvasObject.current.addElement(element, "ipad")
+        }, undefined, function (error) {
+            console.error(error)
+        })
     }, [])
 
-    // useEffect(() => {
-    //     const loader = new GLTFLoader();
-    //     loader.load( 'models/back/scene.gltf', function ( gltf ) {
-    //         console.log( gltf.scene)
-    //         canvas.current.scene.add( gltf.scene );
-    //
-    //     }, undefined, function ( error ) {
-    //         console.error( error );
-    //     } );
-    //
-    // }, [])
+
+
+    useEffect(() => {
+        const loader = new GLTFLoader();
+
+        let pathIpad = 'models/apple/ipad/scene.gltf'
+        // let pathIphone = 'models/apple/iphone11/scene.gltf'
+
+        loader.load(pathIpad, function (gltf) {
+            const element = gltf.scene
+            element.scale.set(0.5, 0.5, 0.5)
+            element.position.set(1,1,6)
+            element.name = "ipad2"
+
+
+            canvasObject.current.addElement(element, "ipad2")
+        }, undefined, function (error) {
+            console.error(error)
+        })
+    }, [])
+
 
     return (
         <div ref={canvasContainer} className="canvas__inner-block">

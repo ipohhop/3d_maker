@@ -2,3 +2,24 @@
   position: relative;
   display: contents;
 }
+
+.constructor__container{
+  /*position: fixed;*/
+  overflow: hidden;
+  /*left: 80px;*/
+  /*top: 20px;*/
+  background: white;
+  /*width: 90vw;*/
+  height: 100vh;
+  /*padding: 10vw 10vh;*/
+}
+
+.test_block{
+  position: fixed;
+  overflow: hidden;
+  left: 80px;
+  top: 20px;
+  background: white;
+  /*width: 90vw;*/
+  /*height: 92vh;*/
+}

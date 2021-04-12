@@ -1,5 +1,5 @@
 //outer
-import React, {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Dispatch, FunctionComponent, SetStateAction, useEffect, useMemo, useRef, useState} from 'react';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 
@@ -12,6 +12,7 @@ import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 
 
 interface OwnProps {
+    onMonitorFocus: Dispatch<SetStateAction<boolean>>
 }
 
 type Props = OwnProps;
@@ -22,10 +23,13 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
     const [width] = useState(window.innerWidth)
     const [height] = useState(window.innerHeight)
 
+    //creat camera
     const camera = useMemo(() => creatPerspectiveCamera(width, height, -1.4, 1.7, 1.5), [width, height])
 
+    //creat canvas object
     const canvas = useRef(new EventBackgroundCanvas(camera, width, height))
 
+    //initialization canvas in component and mount
     useEffect(() => canvas.current.init(canvasContainer, false), [])
 
     // add Lights
@@ -71,17 +75,12 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
             element.name = "robot"
 
             element.animations = gltf.animations
-            // morphTargetDictionary
-            // console.log(element)
+
             const face = element.getObjectByName( 'Head_4' )
             element.getObjectByName( 'Head_4' )
 
-
-            console.log(face)
             // @ts-ignore
             face.morphTargetInfluences=[1,0,0]
-            // const expressions = Object.keys( );
-
 
             canvas.current.addElement(element, "robot")
         }, undefined, function (error) {
@@ -89,9 +88,12 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
         })
     }, [])
 
+
     //add onclick events on plane monitor and robot
     useEffect(() => {
-        canvas.current.clickOnMonitor()
+        canvas.current.clickOnMonitor(props.onMonitorFocus)
+
+        // event click on robot with prop callback
         canvas.current.clickOnRobot()
     }, [])
 
