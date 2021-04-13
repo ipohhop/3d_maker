@@ -1,5 +1,5 @@
 // outer
-import React, {FunctionComponent, useState} from 'react';
+import React, {FunctionComponent, useEffect, useState} from 'react';
 
 
 
@@ -7,6 +7,7 @@ import React, {FunctionComponent, useState} from 'react';
 // local
 import {useGlobalContext} from "../../../../../App";
 import MenuOptions from "../../menuOptions/MenuOptions";
+import Logo from "../../../../public/logo/Logo";
 
 
 
@@ -20,12 +21,31 @@ const InsertMenuItem: FunctionComponent<Props> = (props) => {
     const context = useGlobalContext()
     let canvasObject = context.canvas.activeCanvas
 
+    function addiPhone() {
+        context.canvas.addInState()
+        canvasObject.addIphone()
+    }
+
+    function addMacbook() {
+        context.canvas.addInState()
+        canvasObject.addMac()
+    }
+
+    function addiPad() {
+        context.canvas.addInState()
+        canvasObject.addIpad()
+    }
+
+
     const options =[
-        {name: "iPhone", event: canvasObject.addIphone},
-        {name: "iPad", event: canvasObject.addIpad},
-        {name: "Macbook", event: canvasObject.addMac}
+        {name: "iPhone", event: addiPhone},
+        {name: "iPad", event: addiPad},
+        {name: "Macbook", event: addMacbook}
     ]
 
+    useEffect(()=>{
+        console.log(context.canvas)
+    },[context])
 
     return (
         <li style={{position:"relative"}}>

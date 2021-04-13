@@ -21,7 +21,10 @@ const CanvasElement: FunctionComponent<Props> = () => {
 
     let canvasObject = context.canvas.activeCanvas
 
-    useEffect(() => canvasObject.init(canvasContainer, true), [canvasObject])
+    useEffect(() => {
+        console.log("init!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        canvasObject.init(canvasContainer, true)
+    }, [canvasObject.elements])
 
     useEffect(() => canvasObject.addLights(lightThreePoints()), [canvasObject])
 

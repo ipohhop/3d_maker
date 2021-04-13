@@ -23,22 +23,25 @@ export class BaseCreator {
 
     protected scene: THREE.Scene;
     protected renderer: THREE.WebGLRenderer;
-
     protected camera: Camera;
     protected controls: OrbitControls | undefined;
-    protected width: number;
-    protected height: number;
+    width: number;
+    height: number;
     protected mountTime: boolean;
     protected canvas: HTMLCanvasElement | undefined;
     protected onWindowResize: () => void;
-    init: (container: React.MutableRefObject<any>, orbitControl?: boolean) => void;
-    startWindowResize: () => void;
-    stopWindowResize: () => void;
+
     private clock: THREE.Clock;
     private readonly tick: () => void;
     private readonly startAnimation: () => void;
+
+    init: (container: React.MutableRefObject<any>, orbitControl?: boolean) => void;
+    startWindowResize: () => void;
+    stopWindowResize: () => void;
     updatable: Set<any>;
     clone: () => any;
+    setWidthHeight: (width: (number | undefined), height: (number | undefined)) => void;
+
 
     constructor(camera: Camera, width: number, height: number) {
         this.camera = camera
@@ -53,9 +56,14 @@ export class BaseCreator {
         })
 
         this.clone = () => {
-            const clone = Object.create(this);
 
-            return clone;
+            let method1 = Object.assign({}, this);
+            let method2 = JSON.parse(JSON.stringify(this));
+
+            return Object.assign({},method1,method2)
+
+            // return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+
         }
 
         this.init = (container: React.MutableRefObject<any>, orbitControl: boolean = true) => {
@@ -66,8 +74,8 @@ export class BaseCreator {
             this.canvas = (this.renderer as THREE.WebGLRenderer).domElement
 
             // add canvas element in DOM , "if" for don't canvas add in DOM more 1 time if useEffect call more 1 time
-
-            if (this.mountTime) container.current.appendChild(this.canvas) && (this.mountTime = false)
+            container.current.innerHTML=""
+            container.current.appendChild(this.canvas) && (this.mountTime = false)
 
             // add orbit control to canvas
             if (!(this.camera instanceof THREE.CubeCamera) && orbitControl) this.controls = new OrbitControls(this.camera, this.canvas);
@@ -100,6 +108,14 @@ export class BaseCreator {
             if (!(camera instanceof THREE.CubeCamera)) camera.updateProjectionMatrix();
 
             this.renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        this.setWidthHeight=(width:number | undefined,height:number | undefined)=>{
+            if (width)this.width = width
+            if (height) this.height = height;
+
+            (this.renderer as THREE.WebGLRenderer).setSize(this.width, this.height)
+
         }
 
         this.tick = () => {
@@ -157,6 +173,7 @@ export class Creator extends BaseCreator {
                 this.scene.add(element)
                 return
             }
+
             //если группа создаем объект группы и заполняем элементом(ми) добавляем группу по name в объект elements.group[name] далее добавляем в сцену
             if (inGroup) {
                 const group = new THREE.Group();

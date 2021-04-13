@@ -1,5 +1,6 @@
 // outer
 import React, {FunctionComponent, useState} from 'react';
+import {useGlobalContext} from "../../../../../App";
 
 
 
@@ -13,11 +14,14 @@ interface OwnProps {}
 type Props = OwnProps;
 
 const AdvancedMenuItem: FunctionComponent<Props> = (props) => {
-    const [optionsState,setOptionsState] = useState(false)
+
+
+    const context = useGlobalContext()
+    let menuStatus = context.leftMenuStatus[1] as React.Dispatch<React.SetStateAction<string>>
 
     return (
         <li style={{position:"relative"}}>
-            <span onClick={()=>setOptionsState(prev=>!prev)}> Advanced </span>
+            <span onClick={()=>menuStatus(prev=>"advanced")}> Advanced </span>
         </li>
     );
 };
