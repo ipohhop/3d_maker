@@ -2,8 +2,9 @@
 import React, {FunctionComponent, useState} from 'react';
 
 
-
 // local
+import {useGlobalContext} from "../../../../../App";
+
 
 
 
@@ -13,11 +14,13 @@ interface OwnProps {}
 type Props = OwnProps;
 
 const BackgroundMenuItem: FunctionComponent<Props> = (props) => {
-    const [optionsState,setOptionsState] = useState(false)
+
+    const context = useGlobalContext()
+    let menuStatus = context.leftMenuStatus[1] as React.Dispatch<React.SetStateAction<string>>
 
     return (
         <li style={{position:"relative"}}>
-            <span onClick={()=>setOptionsState(prev=>!prev)}> Background </span>
+            <span onClick={()=>menuStatus(prev=>"background")}> Background </span>
         </li>
     );
 };
