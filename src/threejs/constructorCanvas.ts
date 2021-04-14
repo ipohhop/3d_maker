@@ -2,17 +2,40 @@
 import {Creator} from "./root";
 import {Camera} from "./threejsTypes";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {TransformControls} from "three/examples/jsm/controls/TransformControls";
+import * as THREE from "three";
+import {DragControls} from "three/examples/jsm/controls/DragControls";
+import {log} from "util";
 
 
 export class ConstructorCanvas extends Creator {
     addIphone: () => void;
     addIpad: () => void;
     addMac: () => void;
+    private canvasEvent: () => void;
+    playControl: (value: boolean) => void;
+    addTransformControls: () => void;
+
 
 
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
+
+        this.addTransformControls=()=>{
+            this.controls = new TransformControls(this.camera as THREE.PerspectiveCamera, this.canvas);
+        }
+
+
+        this.playControl=(value:boolean)=>{
+            if (this.controls) this.controls.enabled=value
+        }
+
+        this.canvasEvent = ()=>{
+            (this.canvas as HTMLCanvasElement).addEventListener("click",()=>{
+                console.log(" click click to canvas")})
+        }
 
         this.addIphone=()=> {
             const loader = new GLTFLoader()

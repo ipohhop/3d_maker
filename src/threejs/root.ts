@@ -15,16 +15,19 @@ import {
     SceneSettings
 } from "./threejsTypes";
 import gsap from 'gsap';
+import {TransformControls} from "three/examples/jsm/controls/TransformControls";
+import {DragControls} from "three/examples/jsm/controls/DragControls";
 
 
 //  base class creator
 
 export class BaseCreator {
 
+    readonly elements: Elements;
     protected scene: THREE.Scene;
     protected renderer: THREE.WebGLRenderer;
     camera: Camera;
-    protected controls: OrbitControls | undefined;
+    protected controls: OrbitControls | TransformControls |DragControls| undefined;
     width: number;
     height: number;
     protected mountTime: boolean;
@@ -33,7 +36,7 @@ export class BaseCreator {
 
     private clock: THREE.Clock;
     private readonly tick: () => void;
-    private readonly startAnimation: () => void;
+      startAnimation: () => void;
 
     init: (container: React.MutableRefObject<any>, orbitControl?: boolean) => void;
     startWindowResize: () => void;
@@ -41,6 +44,8 @@ export class BaseCreator {
     updatable: Set<any>;
     clone: () => any;
     setWidthHeight: (width: (number | undefined), height: (number | undefined)) => void;
+    dragControls: DragControls | undefined;
+    protected render: () => void;
 
 
     constructor(camera: Camera, width: number, height: number) {
@@ -51,6 +56,10 @@ export class BaseCreator {
         this.mountTime = true
         this.clock = new THREE.Clock()
         this.updatable = new Set()
+        this.elements = {
+            groups: {},
+            elements: {}
+        }
         this.renderer = new THREE.WebGLRenderer({
             alpha: true
         })
@@ -63,7 +72,6 @@ export class BaseCreator {
             return Object.assign({},method1,method2)
 
             // return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
-
         }
 
         this.init = (container: React.MutableRefObject<any>, orbitControl: boolean = true) => {
@@ -80,8 +88,20 @@ export class BaseCreator {
             // add orbit control to canvas
             if (!(this.camera instanceof THREE.CubeCamera) && orbitControl) this.controls = new OrbitControls(this.camera, this.canvas);
 
+            console.log(...Object.values(this.elements.groups))
+            this.dragControls = new DragControls(
+                [ ...Object.values(this.elements.elements),...Object.values(this.elements.groups) ],
+                this.camera as THREE.PerspectiveCamera,
+                this.canvas );
+            this.dragControls.transformGroup=true
+            this.dragControls.addEventListener( 'drag', this.render );
             // start animation
             this.startAnimation()
+        }
+
+
+        this.render=()=>{
+            this.renderer.render( this.scene, this.camera as THREE.PerspectiveCamera)
         }
 
         this.startWindowResize = () => {
@@ -143,12 +163,18 @@ export class BaseCreator {
 
 export class Creator extends BaseCreator {
 
-    readonly elements: Elements;
+
     addLights: (lights: (Light | Light[])) => void;
     addGrid: (grid: (Grid | Grid[])) => void;
     settingScene: (objectSettings: SceneSettings) => void;
-    addElement: (element: (THREE.Mesh | THREE.Mesh[] | THREE.Group), name: string, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
-    tornPerspectiveCamera: (position?: [x: number, y: number, z: number], rotation?: [x: number, y: number, z: number], aspect?: number, near?: number, far?: number) => void;
+    addElement: (element: (THREE.Mesh | THREE.Mesh[] | THREE.Group),
+                 name: string, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
+
+    tornPerspectiveCamera: (position?: [x: number, y: number, z: number],
+                            rotation?: [x: number, y: number, z: number],
+                            aspect?: number, near?: number, far?: number) => void;
+
+    private addDragControls: () => void;
 
 
     constructor(camera: Camera, width: number, height: number) {
@@ -156,13 +182,22 @@ export class Creator extends BaseCreator {
         this.width = width
         this.height = height
         this.camera = camera
-        this.elements = {
-            groups: {},
-            elements: {}
+
+        this.addDragControls=()=>{
+            console.log([...Object.values(this.elements.groups)])
+            let controls  = new DragControls(
+                Object.values(this.elements.groups) ,
+                this.camera as THREE.PerspectiveCamera,
+                this.canvas );
+
+            controls.transformGroup=true
+            controls.addEventListener( 'drag', this.startAnimation );
         }
 
+
         // method for add element in scene
-        this.addElement = (element: THREE.Mesh | THREE.Mesh[] | THREE.Group, nameElement: string, inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
+        this.addElement = (element: THREE.Mesh | THREE.Mesh[] | THREE.Group, nameElement: string,
+                           inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
 
             // сообщение оперезаписи элемента
             if (nameElement in this.elements.groups || nameElement in this.elements.elements) console.log(`вы перезаписали элемент ${nameElement}`)
@@ -171,6 +206,13 @@ export class Creator extends BaseCreator {
             if (element instanceof THREE.Group) {
                 this.elements.groups[nameElement] = element
                 this.scene.add(element)
+
+                this.addDragControls()
+                // @ts-ignore
+                console.log(this.dragControls.getObjects())
+                console.log(1111)
+                this.render()
+                this.startAnimation()
                 return
             }
 
@@ -197,8 +239,13 @@ export class Creator extends BaseCreator {
             } else {
                 element.position.set(x, y, z)
                 this.elements.elements[nameElement] = element
-                this.scene.add(element);
+                this.scene.add(element)
             }
+
+            // @ts-ignore
+            console.log(this.dragControls.getObjects())
+            console.log(1111)
+
         }
 
         // method for add lights in scene

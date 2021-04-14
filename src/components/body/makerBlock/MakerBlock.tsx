@@ -5,6 +5,7 @@ import React, {FunctionComponent} from 'react';
 // local
 import "./makerBlock.scss"
 import CanvasContainer from "./canvas/CanvasContainer";
+import {useGlobalContext} from "../../../App";
 
 
 interface OwnProps {
@@ -14,12 +15,19 @@ type Props = OwnProps;
 
 const MakerBlock: FunctionComponent<Props> = (props) => {
 
+    const context = useGlobalContext()
+    const canvasObject = context.canvas.activeCanvas
+
+    function onOrbitControl(e:React.MouseEvent<HTMLDivElement>) {
+
+    }
+
     return (
         <div className="maker-block__container">
             <CanvasContainer/>
             <div className="module-control__container">
 
-                <div className="module-control__item">
+                <div className="module-control__item controls-module__active ">
 
                     <svg  viewBox="0 -87 432 432" className="controls-module--active--1G4Rl">
                         <path
