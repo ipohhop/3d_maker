@@ -15,6 +15,24 @@ export function lightThreePoints() {
     return lights
 }
 
+export function lightThreePointsConstructions() {
+    const lights = [];
+
+    lights[0] = new THREE.PointLight(0xffffff, 2, 0);
+    lights[1] = new THREE.PointLight(0xffffff, 2, 0);
+    lights[2] = new THREE.PointLight(0xffffff, 2, 0);
+    lights[3] = new THREE.PointLight(0xffffff, 1, 0);
+
+
+    lights[0].position.set(0, 200, 0);
+    lights[1].position.set(100, 200, 100);
+    lights[2].position.set(-100, -200, -100);
+    lights[3].position.set(0, -200, 0);
+
+    return lights
+
+
+}
 
 export function versionTwo() {
     const skyColor = 0xB1E1FF;  // light blue

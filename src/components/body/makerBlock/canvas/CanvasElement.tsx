@@ -5,7 +5,7 @@ import React, {FunctionComponent, useEffect, useRef} from 'react';
 
 // local
 
-import {lightThreePoints} from "../../../../threejs/otherConstructors";
+import {lightThreePointsConstructions} from "../../../../threejs/otherConstructors";
 import {useGlobalContext} from "../../../../App";
 
 
@@ -26,7 +26,7 @@ const CanvasElement: FunctionComponent<Props> = () => {
         canvasObject.init(canvasContainer, true)
     }, [canvasObject.elements])
 
-    useEffect(() => canvasObject.addLights(lightThreePoints()), [canvasObject])
+    useEffect(() => canvasObject.addLights(lightThreePointsConstructions()), [canvasObject])
 
 
     return (

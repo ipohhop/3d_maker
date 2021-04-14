@@ -8,7 +8,6 @@ import {useGlobalContext} from "../../../../App";
 import {InsertState} from "../../../../classConstructors";
 import imgOne from "../../../public/imgs/lilienstein.jpg"
 
-
 interface OwnProps {
 }
 
@@ -19,23 +18,25 @@ const BackgroundSettings: FunctionComponent<Props> = (props) => {
     const context = useGlobalContext()
     const insertCanvas = context.canvas as InsertState
 
-    function eventColor(e:React.MouseEvent<HTMLDivElement>) {
-        if ((e.target as HTMLElement).className  === "color-blocks__container" ) return
+    function eventColor(e: React.MouseEvent<HTMLDivElement>) {
+        if ((e.target as HTMLElement).className === "color-blocks__container") return
         const canvas = insertCanvas.activeCanvas
-        const color  = new THREE.Color((e.target as HTMLElement).style.background);
+        const color = new THREE.Color((e.target as HTMLElement).style.background);
         canvas.settingScene({
-            background:color
+            background: color
         })
     }
-    function eventTexture(e:React.MouseEvent<HTMLDivElement>) {
-        if ((e.target as HTMLElement).className  === "color-blocks__container" ) return
-        const canvas = insertCanvas.activeCanvas
-        // const img  = new THREE.Color((e.target as HTMLElement).style.backgroundImage);
 
-        const texture = new THREE.TextureLoader().load( "models/lilienstein.jpg" );
-        console.log(texture)
+    function eventTexture(e: React.MouseEvent<HTMLDivElement>) {
+        if ((e.target as HTMLElement).className === "color-blocks__container") return
+        const canvas = insertCanvas.activeCanvas
+
+        const path = (e.target as HTMLElement).style.backgroundImage.split("/")[1][0]
+
+        const texture = new THREE.TextureLoader().load(`imeg/${path}.jpg`)
+
         canvas.settingScene({
-            background:texture
+            background: texture
         })
     }
 
@@ -43,7 +44,7 @@ const BackgroundSettings: FunctionComponent<Props> = (props) => {
     return (
         <div className="background-settings__container">
 
-            <h4>Preset Color </h4>
+            <h4> Colors </h4>
 
             <div className="color-blocks__container" onClick={eventColor}>
                 <div style={{background: "rgba(188, 27, 104,0.5)"}}/>
@@ -74,8 +75,14 @@ const BackgroundSettings: FunctionComponent<Props> = (props) => {
 
             <div className="color-blocks__container" onClick={eventTexture}>
 
-                <div style={{background: "models/lilienstein.jpg" , backgroundSize:"100% 100%",backgroundRepeat:"no-repeat"}}/>
-                <div style={{background: "rgba(195, 141, 148,0.5)"}}/>
+                <div style={{background: `url(${"imeg/1.jpg"})`}} className="img-background__blocks"/>
+                <div style={{background: `url(${"imeg/2.jpg"})`}} className="img-background__blocks"/>
+                <div style={{background: `url(${"imeg/3.jpg"})`}} className="img-background__blocks"/>
+                <div style={{background: `url(${"imeg/4.jpg"})`}} className="img-background__blocks"/>
+                <div style={{background: `url(${"imeg/5.jpg"})`}} className="img-background__blocks"/>
+                <div style={{background: `url(${"imeg/6.jpg"})`}} className="img-background__blocks"/>
+                <div style={{background: `url(${"imeg/7.jpg"})`}} className="img-background__blocks"/>
+                <div style={{background: `url(${"imeg/8.jpg"})`}} className="img-background__blocks"/>
 
             </div>
         </div>
