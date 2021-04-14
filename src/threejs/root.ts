@@ -174,7 +174,7 @@ export class Creator extends BaseCreator {
                             rotation?: [x: number, y: number, z: number],
                             aspect?: number, near?: number, far?: number) => void;
 
-    private addDragControls: () => void;
+    private addDragControls: (element:THREE.Group) => void;
 
 
     constructor(camera: Camera, width: number, height: number) {
@@ -183,15 +183,16 @@ export class Creator extends BaseCreator {
         this.height = height
         this.camera = camera
 
-        this.addDragControls=()=>{
+        this.addDragControls=(element:THREE.Group)=>{
             console.log([...Object.values(this.elements.groups)])
             let controls  = new DragControls(
-                Object.values(this.elements.groups) ,
+                [element],
                 this.camera as THREE.PerspectiveCamera,
                 this.canvas );
 
             controls.transformGroup=true
             controls.addEventListener( 'drag', this.startAnimation );
+            this.startAnimation()
         }
 
 
@@ -207,12 +208,9 @@ export class Creator extends BaseCreator {
                 this.elements.groups[nameElement] = element
                 this.scene.add(element)
 
-                this.addDragControls()
-                // @ts-ignore
-                console.log(this.dragControls.getObjects())
-                console.log(1111)
-                this.render()
-                this.startAnimation()
+                this.addDragControls(element)
+
+
                 return
             }
 
