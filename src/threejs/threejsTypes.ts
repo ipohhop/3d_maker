@@ -82,5 +82,7 @@ export  interface EventItem{
 export  interface CameraPositionProps{
     position: {x: number, y: number, z: number},
     rotation: {x: number, y: number, z: number},
-    time:number
+    time:number,
+    ease?:string,
+
 }

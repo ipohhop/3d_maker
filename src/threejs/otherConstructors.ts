@@ -4,6 +4,7 @@ import {MaterialConstructors} from "./threejsTypes";
 
 export function lightThreePoints() {
     const lights = [];
+
     lights[0] = new THREE.PointLight(0xffffff, 1, 0);
     lights[1] = new THREE.PointLight(0xffffff, 1, 0);
     lights[2] = new THREE.PointLight(0xffffff, 1, 0);
@@ -22,16 +23,15 @@ export function lightThreePointsConstructions() {
     lights[1] = new THREE.PointLight(0xffffff, 2, 0);
     lights[2] = new THREE.PointLight(0xffffff, 2, 0);
     lights[3] = new THREE.PointLight(0xffffff, 1, 0);
-
+    lights[4] = new THREE.PointLight(0xffffff, 0.3, 0);
 
     lights[0].position.set(0, 200, 0);
     lights[1].position.set(100, 200, 100);
     lights[2].position.set(-100, -200, -100);
     lights[3].position.set(0, -200, 0);
+    lights[4].position.set(0, 3, 100);
 
     return lights
-
-
 }
 
 export function versionTwo() {
@@ -41,7 +41,6 @@ export function versionTwo() {
 
     return new THREE.HemisphereLight(skyColor, groundColor, intensity);
 }
-
 
 export function versionThree() {
     const color = 0xFFFFFF;
@@ -60,7 +59,6 @@ export function creatGrid(width: number = 100, height: number = 100) {
     if (helper.material instanceof THREE.Material) helper.material.transparent = true;
     return helper
 }
-
 
 //  !! функция создания куба
 

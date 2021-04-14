@@ -23,7 +23,7 @@ export class BaseCreator {
 
     protected scene: THREE.Scene;
     protected renderer: THREE.WebGLRenderer;
-    protected camera: Camera;
+    camera: Camera;
     protected controls: OrbitControls | undefined;
     width: number;
     height: number;
@@ -237,22 +237,22 @@ export class Creator extends BaseCreator {
     }
 }
 
-// class for test
+// class for back
 
 export class EventBackgroundCanvas extends Creator {
 
-    clickOnMonitor: (callbackProps: React.Dispatch<React.SetStateAction<boolean>>) => void
     private events: { [eventName: string]: EventItem }
-    clickOnRobot: () => void;
-
-    private readonly cameraEventOnFocus: (prop: CameraPositionProps) => void;
+    private readonly cameraEventOnFocus: (prop: CameraPositionProps,callbackProps:Dispatch<SetStateAction<boolean>>) => void
     private cameraPositions: {
-        onRoom(): { rotation: { x: number; y: number; z: number }; position: { x: number; y: number; z: number }; time: number };
+        onRoom(): { rotation: { x: number; y: number; z: number }; position: { x: number; y: number; z: number }; time: number }
         active: string;
         onMonitor(): { rotation: { x: number; y: number; z: number }; position: { x: number; y: number; z: number }; time: number }
     };
-    private readonly getIntersects: (x: number, y: number, camera: Camera, object: (THREE.Group | THREE.Mesh), width: number, height: number) => THREE.Intersection[];
+    private readonly getIntersects: (x: number, y: number, camera: Camera, object: (THREE.Group | THREE.Mesh), width: number, height: number) => THREE.Intersection[]
 
+    clickOnMonitor: (callbackProps: React.Dispatch<React.SetStateAction<boolean>>) => void
+    clickOnRobot: () => void;
+    private gsapEvent: gsap.core.Tween | undefined;
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
@@ -267,7 +267,9 @@ export class EventBackgroundCanvas extends Creator {
                 return {
                     position: {x: -1.4, y: 1.7, z: 1.5},
                     rotation: {x: 0, y: -0.5, z: 0},
-                    time: time
+                    time: time,
+                    ease: "elastic"
+
                 }
             },
             onMonitor(time: number = 3) {
@@ -305,30 +307,26 @@ export class EventBackgroundCanvas extends Creator {
         // }
         //
 
-        this.clickOnMonitor = (callbackProps: Dispatch<SetStateAction<boolean>>) => {
+        this.clickOnMonitor = (callbackProps: Dispatch<SetStateAction<any>>) => {
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
 
-                let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, this.elements.elements.planeBack as THREE.Mesh, this.width, this.height);
+                let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, this.elements.elements.planeBack as THREE.Mesh, this.width, this.height)
 
                 if (intersects.length > 0) {
-                    setTimeout(() => {
-                        callbackProps(prev => !prev)
-                    }, 3000)
+                    if (this.gsapEvent) this.gsapEvent.pause()
+
                     if (this.cameraPositions.active === "room") {
-                        this.cameraEventOnFocus(this.cameraPositions.onMonitor())
+                        this.cameraEventOnFocus(this.cameraPositions.onMonitor(),callbackProps)
                         return
                     }
-                    if (this.cameraPositions.active === "monitor") this.cameraEventOnFocus(this.cameraPositions.onRoom())
+                    if (this.cameraPositions.active === "monitor") this.cameraEventOnFocus(this.cameraPositions.onRoom(),callbackProps)
                 }
             }
             (this.canvas as HTMLCanvasElement).addEventListener("click", onDocumentMouseClick, false);
         }
 
         this.clickOnRobot = () => {
-
-            // let montageScene = false
-            // let badFace = 0
 
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
@@ -349,19 +347,15 @@ export class EventBackgroundCanvas extends Creator {
                     const action = mixer.clipAction(clip);
                     action.play()
 
-
                     // @ts-ignore
                     model.tick = (delta: any) => mixer.update(delta)
-
                     this.updatable.add(model)
-
-
                 }
             }
             (this.canvas as HTMLCanvasElement).addEventListener("click", onDocumentMouseClick, false);
         }
 
-        this.cameraEventOnFocus = (finishPosition: CameraPositionProps) => {
+        this.cameraEventOnFocus = (finishPosition: CameraPositionProps , callbackProps:Dispatch<SetStateAction<boolean>>) => {
 
             // start positions
             let {x: PosX, y: PosY, z: PosZ} = this.camera.position
@@ -369,7 +363,9 @@ export class EventBackgroundCanvas extends Creator {
 
             let value = {PosX: PosX, PosY: PosY, PosZ: PosZ, RotX: RotX, RotY: RotY, RotZ: RotZ}
 
-            gsap.to(value, {
+            const gsapAction = gsap.to(value, {
+                paused: true,
+                ease: finishPosition.ease,
 
                 PosX: finishPosition.position.x,
                 PosY: finishPosition.position.y,
@@ -382,12 +378,20 @@ export class EventBackgroundCanvas extends Creator {
                 duration: finishPosition.time,
                 onUpdate: function () {
 
+                    // @ts-ignore
+                    callbackProps(camera.position.toArray())
+
                     camera.position.set(value.PosX, value.PosY, value.PosZ)
                     camera.rotation.set(value.RotX, value.RotY, value.RotZ)
 
                 },
             })
-                .play();
+
+            gsapAction.play()
+
+            this.gsapEvent = gsapAction
+
+
         }
 
         // function for creat raycaster object (объект пересечения с элементом)
@@ -407,7 +411,6 @@ export class EventBackgroundCanvas extends Creator {
             // object - объект проверяемый на пересечение с узлом
             return raycaster.intersectObject(object, true);
         }
-
     }
 }
 

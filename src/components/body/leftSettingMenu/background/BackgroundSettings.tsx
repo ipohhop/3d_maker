@@ -6,7 +6,6 @@ import * as THREE from 'three'
 import "./backgraundSettings.scss"
 import {useGlobalContext} from "../../../../App";
 import {InsertState} from "../../../../classConstructors";
-import imgOne from "../../../public/imgs/lilienstein.jpg"
 
 interface OwnProps {
 }
@@ -20,24 +19,17 @@ const BackgroundSettings: FunctionComponent<Props> = (props) => {
 
     function eventColor(e: React.MouseEvent<HTMLDivElement>) {
         if ((e.target as HTMLElement).className === "color-blocks__container") return
-        const canvas = insertCanvas.activeCanvas
+
         const color = new THREE.Color((e.target as HTMLElement).style.background);
-        canvas.settingScene({
-            background: color
-        })
+        insertCanvas.activeCanvas.settingScene({background: color})
     }
 
     function eventTexture(e: React.MouseEvent<HTMLDivElement>) {
         if ((e.target as HTMLElement).className === "color-blocks__container") return
-        const canvas = insertCanvas.activeCanvas
 
         const path = (e.target as HTMLElement).style.backgroundImage.split("/")[1][0]
-
         const texture = new THREE.TextureLoader().load(`imeg/${path}.jpg`)
-
-        canvas.settingScene({
-            background: texture
-        })
+        insertCanvas.activeCanvas.settingScene({background: texture})
     }
 
 

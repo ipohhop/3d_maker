@@ -2,7 +2,6 @@
 import React, {Dispatch, FunctionComponent, SetStateAction, useEffect, useMemo, useRef, useState} from 'react';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
-
 //local
 import {creatPerspectiveCamera} from "../../threejs/scene&camera";
 import {EventBackgroundCanvas} from "../../threejs/root";
@@ -10,12 +9,12 @@ import {lightThreePoints, planeCreator} from "../../threejs/otherConstructors";
 import "./backCanvas.scss"
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 
-
 interface OwnProps {
     onMonitorFocus: Dispatch<SetStateAction<boolean>>
+    setBackCanvasPosition:Dispatch<SetStateAction<any>>
 }
 
-type Props = OwnProps;
+type Props = OwnProps
 
 const BackCanvas: FunctionComponent<Props> = (props) => {
     const canvasContainer = useRef(null)
@@ -61,7 +60,7 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
     // add robot GLTF 3d object
     useEffect(() => {
         const loader = new GLTFLoader();
-        // DRACOLoader for load
+        // DRACOLoader for load animations
         const dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath('../node_modules/three/examples/js/libs/draco');
         loader.setDRACOLoader(dracoLoader);
@@ -83,28 +82,20 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
             face.morphTargetInfluences=[1,0,0]
 
             canvas.current.addElement(element, "robot")
-        }, undefined, function (error) {
-            console.error(error)
         })
     }, [])
 
-
-    //add onclick events on plane monitor and robot
     useEffect(() => {
-        canvas.current.clickOnMonitor(props.onMonitorFocus)
+        //add onclick events on plane monitor and robot
+        canvas.current.clickOnMonitor(props.setBackCanvasPosition)
 
         // event click on robot with prop callback
         canvas.current.clickOnRobot()
     }, [])
 
-
     return (
-
-        <>
             <div ref={canvasContainer} className="backCanvas__container"
                  style={{width: "100vw", height: "100vh", position: "fixed", zIndex: -1}}/>
-        </>
-
     );
 };
 
