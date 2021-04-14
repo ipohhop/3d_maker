@@ -10,7 +10,7 @@ import "./backCanvas.scss"
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
 
 interface OwnProps {
-    onMonitorFocus: Dispatch<SetStateAction<boolean>>
+    backCanvasObject: Dispatch<SetStateAction<any>>
     setBackCanvasPosition:Dispatch<SetStateAction<any>>
 }
 
@@ -87,11 +87,17 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
 
     useEffect(() => {
         //add onclick events on plane monitor and robot
-        canvas.current.clickOnMonitor(props.setBackCanvasPosition)
+        canvas.current.clickOnMonitor(props.setBackCanvasPosition,canvas.current.canvas as HTMLCanvasElement)
 
         // event click on robot with prop callback
         canvas.current.clickOnRobot()
     }, [])
+
+
+    // get back canvas object for global context
+    useEffect(()=>{
+        props.backCanvasObject(canvas.current)
+    },[])
 
     return (
             <div ref={canvasContainer} className="backCanvas__container"

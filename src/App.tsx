@@ -1,5 +1,5 @@
 // outer
-import React, {createContext, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, Dispatch, SetStateAction, useContext, useMemo, useRef, useState} from 'react';
 
 // local
 import './App.css';
@@ -9,16 +9,21 @@ import BackCanvas from "./components/backCanvas/BackCanvas";
 import {creatPerspectiveCamera} from "./threejs/scene&camera";
 import {ConstructorCanvas} from "./threejs/constructorCanvas";
 import {InsertState} from "./classConstructors";
+import {EventBackgroundCanvas} from "./threejs/root";
 
 
 type GlobalContent = {
     canvas: InsertState | any,
-    leftMenuStatus: [string, React.Dispatch<React.SetStateAction<string>>] | string
+    leftMenuStatus: [string, React.Dispatch<React.SetStateAction<string>>] | string ,
+    backCanvasObject :EventBackgroundCanvas | undefined,
+    setBackCanvasPosition:Dispatch<SetStateAction<any>> | undefined
 }
 
 const MyGlobalContext = createContext<GlobalContent>({
     canvas: 1,
-    leftMenuStatus: ""
+    leftMenuStatus: "",
+    backCanvasObject : undefined,
+    setBackCanvasPosition:undefined
 })
 
 export const useGlobalContext = () => useContext(MyGlobalContext)
@@ -26,7 +31,7 @@ type onMonitor = number[]
 
 function setOnMonitorStatus(setCallback: React.Dispatch<React.SetStateAction<any>>) {
 
-    return function onMonitorFocuse(data: onMonitor) {
+    return function onMonitorFocus(data: onMonitor) {
         const setCallbackFunc = setCallback
 
         const onMonitorPosition: onMonitor = [-0.5, 1.72, 0.33]
@@ -42,7 +47,7 @@ function setOnMonitorStatus(setCallback: React.Dispatch<React.SetStateAction<any
 
 function App() {
 
-    const [focusMonitor, setFocusMonitor] = React.useState(false)
+    const [backCanvasObject, setbackCanvasObject] = React.useState()
     const [backCanvasPosition, setBackCanvasPosition] = useState(false)
 
     // creat canvas-constructor
@@ -56,19 +61,21 @@ function App() {
 
     if (!backCanvasPosition) {
         return <div className="App_container">
-            <BackCanvas onMonitorFocus={setFocusMonitor} setBackCanvasPosition={setOnMonitorStatus(setBackCanvasPosition)}/>
+            <BackCanvas backCanvasObject={setbackCanvasObject} setBackCanvasPosition={setOnMonitorStatus(setBackCanvasPosition)}/>
         </div>
     }
 
     return (
         <div className="App_container">
-            <BackCanvas onMonitorFocus={setFocusMonitor} setBackCanvasPosition={setOnMonitorStatus(setBackCanvasPosition)}/>
+            <BackCanvas backCanvasObject={setbackCanvasObject} setBackCanvasPosition={setOnMonitorStatus(setBackCanvasPosition)}/>
             <div className="constructor__container">
 
                 <MyGlobalContext.Provider
                     value={{
                         canvas: insertState.current,
-                        leftMenuStatus: leftMenuStatus
+                        leftMenuStatus: leftMenuStatus,
+                        backCanvasObject:backCanvasObject,
+                        setBackCanvasPosition : setOnMonitorStatus(setBackCanvasPosition)
                     }}>
 
                     <Header/>

@@ -16,6 +16,7 @@ const CanvasElement: FunctionComponent<Props> = () => {
 
     // get context canvas object
     const context = useGlobalContext()
+    const backCanvasObject = context.backCanvasObject
     const canvasObject = context.canvas.activeCanvas
 
     // paste canvas constructor element in div

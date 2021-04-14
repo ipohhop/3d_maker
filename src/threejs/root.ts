@@ -28,7 +28,7 @@ export class BaseCreator {
     width: number;
     height: number;
     protected mountTime: boolean;
-    protected canvas: HTMLCanvasElement | undefined;
+    canvas: HTMLCanvasElement | undefined;
     protected onWindowResize: () => void;
 
     private clock: THREE.Clock;
@@ -241,6 +241,7 @@ export class Creator extends BaseCreator {
 
 export class EventBackgroundCanvas extends Creator {
 
+    private gsapEvent: gsap.core.Tween | undefined;
     private events: { [eventName: string]: EventItem }
     private readonly cameraEventOnFocus: (prop: CameraPositionProps,callbackProps:Dispatch<SetStateAction<boolean>>) => void
     private cameraPositions: {
@@ -250,9 +251,11 @@ export class EventBackgroundCanvas extends Creator {
     };
     private readonly getIntersects: (x: number, y: number, camera: Camera, object: (THREE.Group | THREE.Mesh), width: number, height: number) => THREE.Intersection[]
 
-    clickOnMonitor: (callbackProps: React.Dispatch<React.SetStateAction<boolean>>) => void
-    clickOnRobot: () => void;
-    private gsapEvent: gsap.core.Tween | undefined;
+
+    clickOnMonitor: (callbackProps: React.Dispatch<React.SetStateAction<boolean>>,htmlElement:HTMLElement) => void
+    clickOnRobot: () => void
+    HTMLElements: {[name:string]:HTMLElement}
+    addHTMLElement: (name: string, element: HTMLElement) => void
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
@@ -260,6 +263,9 @@ export class EventBackgroundCanvas extends Creator {
         this.height = height
         this.camera = camera
         this.events = {}
+        this.HTMLElements={
+            canvas:this.canvas as HTMLCanvasElement
+        }
         this.cameraPositions = {
             active: "room",
             onRoom(time: number = 3) {
@@ -269,7 +275,6 @@ export class EventBackgroundCanvas extends Creator {
                     rotation: {x: 0, y: -0.5, z: 0},
                     time: time,
                     ease: "elastic"
-
                 }
             },
             onMonitor(time: number = 3) {
@@ -282,6 +287,9 @@ export class EventBackgroundCanvas extends Creator {
             }
         }
 
+        this.addHTMLElement=(name:string,element:HTMLElement)=>{
+            this.HTMLElements[name] = element
+        }
         //method for creat events
 
         // this.creatEventClick = (elementTarget: THREE.Group | THREE.Mesh, callback: EventCallBack, eventName: string, addEvent: boolean = true) => {
@@ -307,7 +315,7 @@ export class EventBackgroundCanvas extends Creator {
         // }
         //
 
-        this.clickOnMonitor = (callbackProps: Dispatch<SetStateAction<any>>) => {
+        this.clickOnMonitor = (callbackProps: Dispatch<SetStateAction<any>>,htmlElement:HTMLElement) => {
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
 
@@ -323,7 +331,7 @@ export class EventBackgroundCanvas extends Creator {
                     if (this.cameraPositions.active === "monitor") this.cameraEventOnFocus(this.cameraPositions.onRoom(),callbackProps)
                 }
             }
-            (this.canvas as HTMLCanvasElement).addEventListener("click", onDocumentMouseClick, false);
+            htmlElement.addEventListener("click", onDocumentMouseClick, false);
         }
 
         this.clickOnRobot = () => {
