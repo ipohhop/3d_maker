@@ -1,0 +1,41 @@
+.background-settings__container {
+  display: flex;
+  flex-direction: column;
+
+  h4 {
+    color: #000;
+    font-weight: 400;
+    margin-bottom: 10px;
+    display: block;
+    font-size: 2em;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    text-align: center;
+  }
+
+}
+
+.color-blocks__container {
+  padding-left: 5px;
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: repeat(4, 1fr);
+  grid-row-gap: 7px;
+  grid-column-gap: 7px;
+
+  div {
+    width: 40px;
+    height: 40px;
+    box-shadow: inset 0 0 0 1px red;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+
+.img-background__blocks{
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}

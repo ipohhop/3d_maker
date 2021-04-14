@@ -1,0 +1,42 @@
+
+.option-module--options--1VaAT {
+  left: 0;
+  top: 25px;
+  position: absolute;
+  padding: 6px 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px 1px ;
+  z-index: 1;
+  background-color: #fff;
+  min-width: 200px;
+}
+
+.option-module--options--1VaAT .option-module--option--1LMwC {
+  padding: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  position: relative;
+  align-items: center;
+}
+
+.option-module--options--1VaAT .option-module--option--1LMwC>.option-module--icon--1zfpu {
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ .option-module--options--1VaAT .option-module--option--1LMwC span {
+  flex: 1 1;
+}
+
+ .option-module--disabled--2czkJ{
+   pointer-events: none;
+   color: #c5c5c5;
+   cursor: default;
+   svg{
+     fill: #c5c5c5;
+   }
+ }

@@ -2,9 +2,12 @@
 import React, {FunctionComponent} from 'react';
 
 //local
-import NavItem from "./NavItem";
 import "./menuNav.scss"
-
+import FileMenuItem from "./menuItems/FileMenuItem";
+import EditMenuItem from "./menuItems/EditMenuItem";
+import InsertMenuItem from "./menuItems/InsertMenuItem";
+import BackgroundMenuItem from "./menuItems/BackgroundMenuItem";
+import AdvancedMenuItem from "./menuItems/AdvancedMenuItem";
 
 
 interface OwnProps {
@@ -12,14 +15,10 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-
-const menuItems = [
-    {name: "File", event: () => null},
-    {name: "Edit", event: () => null},
-    {name: "Insert", event: () => null},
-    {name: "Background", event: () => null},
-    {name: "Advanced", event: () => null},
-]
+export type objectItem = {
+    name: string,
+    event: () => any | void
+}
 
 
 const MenuNav: FunctionComponent<Props> = (props) => {
@@ -27,9 +26,11 @@ const MenuNav: FunctionComponent<Props> = (props) => {
     return (
         <nav className="header__nav">
             <ul>
-                {menuItems.map((item, index) => {
-                    return <NavItem key={index} name={item.name} event={item.event}/>
-                })}
+                <FileMenuItem/>
+                <EditMenuItem/>
+                <InsertMenuItem/>
+                <BackgroundMenuItem/>
+                <AdvancedMenuItem/>
             </ul>
         </nav>
     );
