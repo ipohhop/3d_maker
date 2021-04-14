@@ -88,14 +88,6 @@ export class BaseCreator {
             // add orbit control to canvas
             if (!(this.camera instanceof THREE.CubeCamera) && orbitControl) this.controls = new OrbitControls(this.camera, this.canvas);
 
-            console.log(...Object.values(this.elements.groups))
-            this.dragControls = new DragControls(
-                [ ...Object.values(this.elements.elements),...Object.values(this.elements.groups) ],
-                this.camera as THREE.PerspectiveCamera,
-                this.canvas );
-            this.dragControls.transformGroup=true
-            this.dragControls.addEventListener( 'drag', this.render );
-            // start animation
             this.startAnimation()
         }
 
@@ -168,7 +160,7 @@ export class Creator extends BaseCreator {
     addGrid: (grid: (Grid | Grid[])) => void;
     settingScene: (objectSettings: SceneSettings) => void;
     addElement: (element: (THREE.Mesh | THREE.Mesh[] | THREE.Group),
-                 name: string, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
+                 name: string,drag?:boolean, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
 
     tornPerspectiveCamera: (position?: [x: number, y: number, z: number],
                             rotation?: [x: number, y: number, z: number],
@@ -197,7 +189,7 @@ export class Creator extends BaseCreator {
 
 
         // method for add element in scene
-        this.addElement = (element: THREE.Mesh | THREE.Mesh[] | THREE.Group, nameElement: string,
+        this.addElement = (element: THREE.Mesh | THREE.Mesh[] | THREE.Group, nameElement: string,drag:boolean=false,
                            inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
 
             // сообщение оперезаписи элемента
@@ -208,7 +200,7 @@ export class Creator extends BaseCreator {
                 this.elements.groups[nameElement] = element
                 this.scene.add(element)
 
-                this.addDragControls(element)
+               if (drag) this.addDragControls(element)
 
 
                 return
@@ -239,10 +231,6 @@ export class Creator extends BaseCreator {
                 this.elements.elements[nameElement] = element
                 this.scene.add(element)
             }
-
-            // @ts-ignore
-            console.log(this.dragControls.getObjects())
-            console.log(1111)
 
         }
 

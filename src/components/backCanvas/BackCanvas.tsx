@@ -44,7 +44,7 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
     useEffect(() => {
         let eventElement = (planeCreator(0.82, 0.54, 1, 1))
         eventElement.name = "planeBack"
-        canvas.current.addElement(eventElement, "planeBack", false, -0.5, 1.68, 0)
+        canvas.current.addElement(eventElement, "planeBack", false,false, -0.5, 1.68, 0)
     }, [])
 
     // add background GLTF 3d object
