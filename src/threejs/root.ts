@@ -26,26 +26,30 @@ export class BaseCreator {
     readonly elements: Elements;
     protected scene: THREE.Scene;
     protected renderer: THREE.WebGLRenderer;
-    camera: Camera;
-    protected controls: OrbitControls | TransformControls |DragControls| undefined;
-    width: number;
-    height: number;
+    protected controls: OrbitControls | TransformControls | DragControls | undefined;
     protected mountTime: boolean;
-    canvas: HTMLCanvasElement | undefined;
     protected onWindowResize: () => void;
+    protected controlStatus: string;
+    protected render: () => void;
 
     private clock: THREE.Clock;
     private readonly tick: () => void;
-      startAnimation: () => void;
+    private readonly startAnimation: () => void;
+    private orbitControl: OrbitControls[];
 
     init: (container: React.MutableRefObject<any>, orbitControl?: boolean) => void;
     startWindowResize: () => void;
     stopWindowResize: () => void;
-    updatable: Set<any>;
-    clone: () => any;
     setWidthHeight: (width: (number | undefined), height: (number | undefined)) => void;
-    dragControls: DragControls | undefined;
-    protected render: () => void;
+    setControlStatus: (status: string) => void;
+    clone: () => any;
+
+    canvas: HTMLCanvasElement | undefined;
+    camera: Camera;
+    width: number;
+    height: number;
+    updatable: Set<any>;
+    dragControls: DragControls [];
 
 
     constructor(camera: Camera, width: number, height: number) {
@@ -56,6 +60,9 @@ export class BaseCreator {
         this.mountTime = true
         this.clock = new THREE.Clock()
         this.updatable = new Set()
+        this.dragControls = []
+        this.orbitControl = []
+        this.controlStatus = "orbit"
         this.elements = {
             groups: {},
             elements: {}
@@ -64,12 +71,39 @@ export class BaseCreator {
             alpha: true
         })
 
+
+        this.setControlStatus = (status: string) => {
+            if (status === "orbit") {
+                this.controlStatus = status
+
+                this.orbitControl.forEach((item) => {
+                    item.enabled = true
+                })
+
+                this.dragControls.forEach((item) => {
+                    item.enabled = false
+                })
+            }
+            if (status === "drag") {
+                this.controlStatus = status
+                this.dragControls.forEach((item) => {
+                    item.enabled = true
+                })
+
+                this.orbitControl.forEach((item) => {
+                    item.enabled = false
+                })
+
+            }
+
+        }
+
         this.clone = () => {
 
             let method1 = Object.assign({}, this);
             let method2 = JSON.parse(JSON.stringify(this));
 
-            return Object.assign({},method1,method2)
+            return Object.assign({}, method1, method2)
 
             // return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
         }
@@ -82,18 +116,18 @@ export class BaseCreator {
             this.canvas = (this.renderer as THREE.WebGLRenderer).domElement
 
             // add canvas element in DOM , "if" for don't canvas add in DOM more 1 time if useEffect call more 1 time
-            container.current.innerHTML=""
+            container.current.innerHTML = ""
             container.current.appendChild(this.canvas) && (this.mountTime = false)
 
             // add orbit control to canvas
-            if (!(this.camera instanceof THREE.CubeCamera) && orbitControl) this.controls = new OrbitControls(this.camera, this.canvas);
+            if (!(this.camera instanceof THREE.CubeCamera) && orbitControl) this.orbitControl = [new OrbitControls(this.camera, this.canvas)];
 
             this.startAnimation()
         }
 
 
-        this.render=()=>{
-            this.renderer.render( this.scene, this.camera as THREE.PerspectiveCamera)
+        this.render = () => {
+            this.renderer.render(this.scene, this.camera as THREE.PerspectiveCamera)
         }
 
         this.startWindowResize = () => {
@@ -124,8 +158,8 @@ export class BaseCreator {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        this.setWidthHeight=(width:number | undefined,height:number | undefined)=>{
-            if (width)this.width = width
+        this.setWidthHeight = (width: number | undefined, height: number | undefined) => {
+            if (width) this.width = width
             if (height) this.height = height;
 
             (this.renderer as THREE.WebGLRenderer).setSize(this.width, this.height)
@@ -162,13 +196,13 @@ export class Creator extends BaseCreator {
     addGrid: (grid: (Grid | Grid[])) => void;
     settingScene: (objectSettings: SceneSettings) => void;
     addElement: (element: (THREE.Mesh | THREE.Mesh[] | THREE.Group),
-                 name: string,drag?:boolean, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
+                 name: string, drag?: boolean, inGroup?: boolean, x?: number, y?: number, z?: number) => void;
 
     tornPerspectiveCamera: (position?: [x: number, y: number, z: number],
                             rotation?: [x: number, y: number, z: number],
                             aspect?: number, near?: number, far?: number) => void;
 
-    private addDragControls: (element:THREE.Group) => void;
+    private readonly addDragControls: (element: THREE.Group) => void;
 
 
     constructor(camera: Camera, width: number, height: number) {
@@ -177,21 +211,23 @@ export class Creator extends BaseCreator {
         this.height = height
         this.camera = camera
 
-        this.addDragControls=(element:THREE.Group)=>{
+        this.addDragControls = (element: THREE.Group) => {
             console.log([...Object.values(this.elements.groups)])
-            let controls  = new DragControls(
+            let controls = new DragControls(
                 [element],
                 this.camera as THREE.PerspectiveCamera,
-                this.canvas );
+                this.canvas);
 
-            controls.transformGroup=true
-            controls.addEventListener( 'drag', this.render );
+            controls.transformGroup = true
+            controls.addEventListener('drag', this.render);
 
+            this.dragControls.push(controls)
+            if (!(this.controlStatus === "drag")) controls.enabled = false
         }
 
 
         // method for add element in scene
-        this.addElement = (element: THREE.Mesh | THREE.Mesh[] | THREE.Group, nameElement: string,drag:boolean=false,
+        this.addElement = (element: THREE.Mesh | THREE.Mesh[] | THREE.Group, nameElement: string, drag: boolean = false,
                            inGroup: boolean = false, x: number = 0, y: number = 0, z: number = 0) => {
 
             // сообщение оперезаписи элемента
@@ -202,7 +238,7 @@ export class Creator extends BaseCreator {
                 this.elements.groups[nameElement] = element
                 this.scene.add(element)
 
-               if (drag) this.addDragControls(element)
+                if (drag) this.addDragControls(element)
 
 
                 return
@@ -278,7 +314,7 @@ export class EventBackgroundCanvas extends Creator {
 
     private gsapEvent: gsap.core.Tween | undefined;
     private events: { [eventName: string]: EventItem }
-    private readonly cameraEventOnFocus: (prop: CameraPositionProps,callbackProps:Dispatch<SetStateAction<boolean>>) => void
+    private readonly cameraEventOnFocus: (prop: CameraPositionProps, callbackProps: Dispatch<SetStateAction<boolean>>) => void
     private cameraPositions: {
         onRoom(): { rotation: { x: number; y: number; z: number }; position: { x: number; y: number; z: number }; time: number }
         active: string;
@@ -287,9 +323,9 @@ export class EventBackgroundCanvas extends Creator {
     private readonly getIntersects: (x: number, y: number, camera: Camera, object: (THREE.Group | THREE.Mesh), width: number, height: number) => THREE.Intersection[]
 
 
-    clickOnMonitor: (callbackProps: React.Dispatch<React.SetStateAction<boolean>>,htmlElement:HTMLElement) => void
+    clickOnMonitor: (callbackProps: React.Dispatch<React.SetStateAction<boolean>>, htmlElement: HTMLElement) => void
     clickOnRobot: () => void
-    HTMLElements: {[name:string]:HTMLElement}
+    HTMLElements: { [name: string]: HTMLElement }
     addHTMLElement: (name: string, element: HTMLElement) => void
 
     constructor(camera: Camera, width: number, height: number) {
@@ -298,8 +334,8 @@ export class EventBackgroundCanvas extends Creator {
         this.height = height
         this.camera = camera
         this.events = {}
-        this.HTMLElements={
-            canvas:this.canvas as HTMLCanvasElement
+        this.HTMLElements = {
+            canvas: this.canvas as HTMLCanvasElement
         }
         this.cameraPositions = {
             active: "room",
@@ -322,7 +358,7 @@ export class EventBackgroundCanvas extends Creator {
             }
         }
 
-        this.addHTMLElement=(name:string,element:HTMLElement)=>{
+        this.addHTMLElement = (name: string, element: HTMLElement) => {
             this.HTMLElements[name] = element
         }
         //method for creat events
@@ -350,7 +386,7 @@ export class EventBackgroundCanvas extends Creator {
         // }
         //
 
-        this.clickOnMonitor = (callbackProps: Dispatch<SetStateAction<any>>,htmlElement:HTMLElement) => {
+        this.clickOnMonitor = (callbackProps: Dispatch<SetStateAction<any>>, htmlElement: HTMLElement) => {
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
 
@@ -359,15 +395,15 @@ export class EventBackgroundCanvas extends Creator {
                     this.elements.elements.planeBack as THREE.Mesh, this.width, this.height
                 )
 
-                if (intersects.length > 0 || htmlElement.id==="outDoor") {
+                if (intersects.length > 0 || htmlElement.id === "outDoor") {
                     // stop camera animation if it was start
                     if (this.gsapEvent) this.gsapEvent.pause()
 
                     if (this.cameraPositions.active === "room") {
-                        this.cameraEventOnFocus(this.cameraPositions.onMonitor(),callbackProps)
+                        this.cameraEventOnFocus(this.cameraPositions.onMonitor(), callbackProps)
                         return
                     }
-                    if (this.cameraPositions.active === "monitor") this.cameraEventOnFocus(this.cameraPositions.onRoom(),callbackProps)
+                    if (this.cameraPositions.active === "monitor") this.cameraEventOnFocus(this.cameraPositions.onRoom(), callbackProps)
                 }
             }
             htmlElement.addEventListener("click", onDocumentMouseClick, false);
@@ -402,7 +438,7 @@ export class EventBackgroundCanvas extends Creator {
             (this.canvas as HTMLCanvasElement).addEventListener("click", onDocumentMouseClick, false);
         }
 
-        this.cameraEventOnFocus = (finishPosition: CameraPositionProps , callbackProps:Dispatch<SetStateAction<boolean>>) => {
+        this.cameraEventOnFocus = (finishPosition: CameraPositionProps, callbackProps: Dispatch<SetStateAction<boolean>>) => {
 
             // start positions
             let {x: PosX, y: PosY, z: PosZ} = this.camera.position

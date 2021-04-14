@@ -1,5 +1,5 @@
 // outer
-import React, {FunctionComponent} from 'react';
+import React, {FunctionComponent, useRef} from 'react';
 
 
 // local
@@ -15,11 +15,25 @@ type Props = OwnProps;
 
 const MakerBlock: FunctionComponent<Props> = (props) => {
 
+    const orbitButton =useRef(null);
+    const dragButton = useRef(null);
+
+
     const context = useGlobalContext()
     const canvasObject = context.canvas.activeCanvas
 
     function onOrbitControl(e:React.MouseEvent<HTMLDivElement>) {
+        (orbitButton.current as unknown as HTMLDivElement).classList.add("controls-module__active");
+        (dragButton.current as unknown as HTMLDivElement).classList.remove("controls-module__active")
 
+        canvasObject.setControlStatus("orbit")
+    }
+
+    function onDragControl(e:React.MouseEvent<HTMLDivElement>) {
+        (orbitButton.current as unknown as HTMLDivElement).classList.remove("controls-module__active");
+        (dragButton.current as unknown as HTMLDivElement).classList.add("controls-module__active")
+
+        canvasObject.setControlStatus("drag")
     }
 
     return (
@@ -27,7 +41,7 @@ const MakerBlock: FunctionComponent<Props> = (props) => {
             <CanvasContainer/>
             <div className="module-control__container">
 
-                <div className="module-control__item controls-module__active ">
+                <div ref={orbitButton} onClick={onOrbitControl} className="module-control__item controls-module__active ">
 
                     <svg  viewBox="0 -87 432 432" className="controls-module--active--1G4Rl">
                         <path
@@ -39,7 +53,7 @@ const MakerBlock: FunctionComponent<Props> = (props) => {
 
                 </div>
 
-                <div className="module-control__item  controls-module__active">
+                <div ref={dragButton} onClick={onDragControl}  className="module-control__item  ">
 
                     <svg id="Capa_1"  viewBox="0 0 512 512" >
                         <g>
