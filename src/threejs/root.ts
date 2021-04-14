@@ -183,8 +183,8 @@ export class Creator extends BaseCreator {
                 this.canvas );
 
             controls.transformGroup=true
-            controls.addEventListener( 'drag', this.startAnimation );
-            this.startAnimation()
+            controls.addEventListener( 'drag', this.render );
+
         }
 
 
