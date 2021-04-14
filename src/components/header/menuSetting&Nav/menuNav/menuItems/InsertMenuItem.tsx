@@ -7,7 +7,7 @@ import React, {FunctionComponent, useEffect, useState} from 'react';
 // local
 import {useGlobalContext} from "../../../../../App";
 import MenuOptions from "../../menuOptions/MenuOptions";
-import Logo from "../../../../public/logo/Logo";
+
 
 
 
@@ -15,7 +15,7 @@ interface OwnProps {}
 
 type Props = OwnProps;
 
-const InsertMenuItem: FunctionComponent<Props> = (props) => {
+const InsertMenuItem: FunctionComponent<Props> = () => {
     const [optionsState,setOptionsState] = useState(false)
 
     const context = useGlobalContext()
@@ -50,10 +50,11 @@ const InsertMenuItem: FunctionComponent<Props> = (props) => {
     return (
         <li style={{position:"relative"}}>
             <span onClick={()=>setOptionsState(prev=>!prev)}> Insert </span>
-            { optionsState && < > {<MenuOptions optionsItems={options}/>} </>}
+            { optionsState && < > {<MenuOptions key="1" optionsItems={options}/>} </>}
         </li>
     );
 };
+
 
 
 export default InsertMenuItem;

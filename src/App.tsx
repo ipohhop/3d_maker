@@ -29,18 +29,19 @@ const MyGlobalContext = createContext<GlobalContent>({
 export const useGlobalContext = () => useContext(MyGlobalContext)
 type onMonitor = number[]
 
-function setOnMonitorStatus(setCallback: React.Dispatch<React.SetStateAction<any>>) {
+function setOnMonitorStatus(setCallback:[boolean, React.Dispatch<React.SetStateAction<boolean>>]) {
 
     return function onMonitorFocus(data: onMonitor) {
-        const setCallbackFunc = setCallback
+        const callbackValue = setCallback[0]
+        const setCallbackFunc = setCallback[1]
 
         const onMonitorPosition: onMonitor = [-0.5, 1.72, 0.33]
 
         if (data[0] === onMonitorPosition[0] && data[1] === onMonitorPosition[1] && data[3] === onMonitorPosition[3]) {
-            setCallbackFunc(true)
+            if (!callbackValue)setCallbackFunc(true)
             return
         }
-        setCallbackFunc(false)
+        if (callbackValue)setCallbackFunc(false)
         return
     }
 }
@@ -48,7 +49,7 @@ function setOnMonitorStatus(setCallback: React.Dispatch<React.SetStateAction<any
 function App() {
 
     const [backCanvasObject, setbackCanvasObject] = React.useState()
-    const [backCanvasPosition, setBackCanvasPosition] = useState(false)
+    const backCanvasPosition = useState(false)
 
     // creat canvas-constructor
     const camera = useMemo(() => creatPerspectiveCamera(500, 500, 0, 0, 45.5), [])
@@ -59,15 +60,15 @@ function App() {
     const leftMenuStatus = useState("")
 
 
-    if (!backCanvasPosition) {
+    if (!backCanvasPosition[0]) {
         return <div className="App_container">
-            <BackCanvas backCanvasObject={setbackCanvasObject} setBackCanvasPosition={setOnMonitorStatus(setBackCanvasPosition)}/>
+            <BackCanvas backCanvasObject={setbackCanvasObject} setBackCanvasPosition={setOnMonitorStatus(backCanvasPosition)}/>
         </div>
     }
 
     return (
         <div className="App_container">
-            <BackCanvas backCanvasObject={setbackCanvasObject} setBackCanvasPosition={setOnMonitorStatus(setBackCanvasPosition)}/>
+            <BackCanvas backCanvasObject={setbackCanvasObject} setBackCanvasPosition={setOnMonitorStatus(backCanvasPosition)}/>
             <div className="constructor__container">
 
                 <MyGlobalContext.Provider
@@ -75,7 +76,7 @@ function App() {
                         canvas: insertState.current,
                         leftMenuStatus: leftMenuStatus,
                         backCanvasObject:backCanvasObject,
-                        setBackCanvasPosition : setOnMonitorStatus(setBackCanvasPosition)
+                        setBackCanvasPosition : setOnMonitorStatus(backCanvasPosition)
                     }}>
 
                     <Header/>

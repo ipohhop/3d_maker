@@ -2,25 +2,7 @@
 
 // local
 import {ConstructorCanvas} from "./threejs/constructorCanvas";
-import React, {Dispatch, useMemo, useState} from "react";
-import {creatPerspectiveCamera} from "./threejs/scene&camera";
-
-
-const width=500
-const height=500
-const camera = creatPerspectiveCamera(width, height, 0, 0, 45.5)
-// const canvas = useRef(new ConstructorCanvas(camera, width, height))
-
-const canvas = new ConstructorCanvas(camera, width, height)
-
-
-
-
-
-
-
-
-
+import React from "react";
 
 
 export class InsertState {

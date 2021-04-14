@@ -118,6 +118,8 @@ export class BaseCreator {
         this.onWindowResize = () => {
             if (this.camera instanceof THREE.PerspectiveCamera) this.camera.aspect = window.innerWidth / window.innerHeight;
             if (!(camera instanceof THREE.CubeCamera)) camera.updateProjectionMatrix();
+            this.width = window.innerWidth
+            this.height = window.innerHeight
 
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         }
@@ -352,9 +354,13 @@ export class EventBackgroundCanvas extends Creator {
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
 
-                let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, this.elements.elements.planeBack as THREE.Mesh, this.width, this.height)
+                let intersects = this.getIntersects(
+                    event.layerX, event.layerY, this.camera,
+                    this.elements.elements.planeBack as THREE.Mesh, this.width, this.height
+                )
 
-                if (intersects.length > 0) {
+                if (intersects.length > 0 || htmlElement.id==="outDoor") {
+                    // stop camera animation if it was start
                     if (this.gsapEvent) this.gsapEvent.pause()
 
                     if (this.cameraPositions.active === "room") {
