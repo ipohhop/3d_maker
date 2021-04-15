@@ -21,20 +21,15 @@ const ElementSettings: FunctionComponent<Props> = (props) => {
     const context = useGlobalContext()
     const activCanvasObject = context.canvas.activeCanvas
 
-
-
-
     const canvasElement= props.data
-    const testAttr = {'data-attr': 'test'}
+
 
 
     // delete
     function deleteElement() {
          delete activCanvasObject.elements.groups[canvasElement.name]
-         activCanvasObject.render()
+         // activCanvasObject.rerender(activCanvasObject.canvas)
     }
-
-
 
     // SIZE
     const size = useMemo(()=>props.data.scale.toArray(),[props.data])
@@ -103,7 +98,7 @@ const ElementSettings: FunctionComponent<Props> = (props) => {
             <h3>Size</h3>
             <div className="slider-module--slider-container--2O8f7">
                 <div className="slider-module--inner--1oNQH">
-                    <input {...testAttr} type="range" min="0" max="20" step={stepSize*10} onChange={setSize} className="slider-module--slider--1oBFm" value={sizeValue}/>
+                    <input type="range" min="0" max="20" step={stepSize*10} onChange={setSize} className="slider-module--slider--1oBFm" value={sizeValue}/>
                     <input type="number" className="slider-module--box--2rfF_" onChange={setSize} step={stepSize}  value={sizeValue}/>
                 </div>
             </div>
