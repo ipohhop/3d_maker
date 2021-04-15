@@ -7,37 +7,41 @@ import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import * as THREE from "three";
 import {DragControls} from "three/examples/jsm/controls/DragControls";
 import {log} from "util";
+import {Group} from "three";
 
 
 export class ConstructorCanvas extends Creator {
+
+    private canvasEvent: () => void;
+
     addIphone: () => void;
     addIpad: () => void;
     addMac: () => void;
-    private canvasEvent: () => void;
     playControl: (value: boolean) => void;
     addTransformControls: () => void;
-
-
+    getIntersects: (x: number, y: number, camera: Camera, object: Group[], width: number, height: number) => void;
+    checkElementEvent: () => void;
 
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
 
-        this.addTransformControls=()=>{
+        this.addTransformControls = () => {
             this.controls = new TransformControls(this.camera as THREE.PerspectiveCamera, this.canvas);
         }
 
 
-        this.playControl=(value:boolean)=>{
-            if (this.controls) this.controls.enabled=value
+        this.playControl = (value: boolean) => {
+            if (this.controls) this.controls.enabled = value
         }
 
-        this.canvasEvent = ()=>{
-            (this.canvas as HTMLCanvasElement).addEventListener("click",()=>{
-                console.log(" click click to canvas")})
+        this.canvasEvent = () => {
+            (this.canvas as HTMLCanvasElement).addEventListener("click", () => {
+                console.log(" click click to canvas")
+            })
         }
 
-        this.addIphone=()=> {
+        this.addIphone = () => {
             const loader = new GLTFLoader()
             const pathIphone = 'models/apple/iphone11/scene.gltf'
             const canvas = this
@@ -47,13 +51,13 @@ export class ConstructorCanvas extends Creator {
                 let name = `iphone#${Math.random()}`
                 element.name = name
 
-                element.position.set(Math.random()*10,Math.random()*10,Math.random()*10)
+                element.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10)
 
-                canvas.addElement(element,name,true)
+                canvas.addElement(element, name, true)
             })
         }
 
-        this.addIpad=()=> {
+        this.addIpad = () => {
             const loader = new GLTFLoader()
             const pathIphone = 'models/apple/ipad/scene.gltf'
             const canvas = this
@@ -63,14 +67,14 @@ export class ConstructorCanvas extends Creator {
                 let name = `ipad#${Math.random()}`
                 element.name = name
 
-                element.position.set(Math.random()*10,Math.random()*10,Math.random()*10)
+                element.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10)
 
-                canvas.addElement(element,name,true)
+                canvas.addElement(element, name, true)
 
             })
         }
 
-        this.addMac=()=> {
+        this.addMac = () => {
             const loader = new GLTFLoader()
             const pathIphone = 'models/apple/macbook/scene.gltf'
             const canvas = this
@@ -80,17 +84,53 @@ export class ConstructorCanvas extends Creator {
                 let name = `mac#${Math.random()}`
                 element.name = name
 
-                element.position.set(Math.random()*10,Math.random()*10,Math.random()*10)
+                element.position.set(Math.random() * 10, Math.random() * 10, Math.random() * 10)
 
-                canvas.addElement(element,name,true)
-
+                canvas.addElement(element, name, true)
             })
         }
 
+        this.checkElementEvent = () => {
+
+            const onDocumentMouseClick = (event: any) => {
+                event.preventDefault();
+
+                console.log(Object.values(this.elements.groups))
+
+                let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, Object.values(this.elements.groups), this.width, this.height);
+
+                console.log(intersects)
+
+            }
+            (this.canvas as HTMLCanvasElement).addEventListener("click", onDocumentMouseClick, false);
+        }
+
+        // function for creat raycaster object (объект пересечения с элементом)
+
+        this.getIntersects = (x: number, y: number, camera: Camera, object: THREE.Group[] , width: number, height: number) => {
+
+            let raycaster = new THREE.Raycaster();
+            let mouseVector = new THREE.Vector2();
+
+            let Crx = (x / width) * 2 - 1;
+            let Cry = -((y) / height) * 2 + 1;
+
+            mouseVector.set(Crx, Cry);
+
+            raycaster.setFromCamera(mouseVector, camera as THREE.PerspectiveCamera | THREE.OrthographicCamera);
+
+            // object - объект проверяемый на пересечение с узлом
+
+            let value = null
+
+            object.forEach((item)=>{
+               if (raycaster.intersectObjects([item], true).length > 1 ) value = item
+            })
+
+            return value
+        }
+
     }
-
-
-
 
 
 }

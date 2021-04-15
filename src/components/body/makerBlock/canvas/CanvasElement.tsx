@@ -25,6 +25,9 @@ const CanvasElement: FunctionComponent<Props> = () => {
     // add light's  in scene
     useEffect(() => canvasObject.addLights(lightThreePointsConstructions()), [canvasObject])
 
+    // add light's  in scene
+    useEffect(() => canvasObject.checkElementEvent(), [canvasObject])
+
 
     return (<div ref={canvasContainer} className="canvas__inner-block"/>)
 };
