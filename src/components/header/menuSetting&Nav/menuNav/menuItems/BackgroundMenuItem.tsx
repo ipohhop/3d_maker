@@ -16,11 +16,11 @@ type Props = OwnProps;
 const BackgroundMenuItem: FunctionComponent<Props> = () => {
 
     const context = useGlobalContext()
-    let menuStatus = context.leftMenuStatus[1] as React.Dispatch<React.SetStateAction<string>>
+    let menuStatus = context.leftMenuStatus[1] as React.Dispatch<React.SetStateAction<any>>
 
     return (
         <li style={{position:"relative"}}>
-            <span onClick={()=>menuStatus(prev=>"background")}> Background </span>
+            <span onClick={()=>menuStatus({type:"background",props:{}})}> Background </span>
         </li>
     );
 };

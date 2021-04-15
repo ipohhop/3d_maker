@@ -14,7 +14,7 @@ import {EventBackgroundCanvas} from "./threejs/root";
 
 type GlobalContent = {
     canvas: InsertState | any,
-    leftMenuStatus: [string, React.Dispatch<React.SetStateAction<string>>] | string ,
+    leftMenuStatus: [any, React.Dispatch<React.SetStateAction<any>>] | string ,
     backCanvasObject :EventBackgroundCanvas | undefined,
     setBackCanvasPosition:Dispatch<SetStateAction<any>> | undefined
 }
@@ -57,7 +57,10 @@ function App() {
     const canvas = useState(new ConstructorCanvas(camera, 800, 600))
     const insertState = useRef(new InsertState(canvas))
 
-    const leftMenuStatus = useState("")
+    const leftMenuStatus = useState({
+        type:"",
+        props:{}
+    })
 
 
     if (!backCanvasPosition[0]) {

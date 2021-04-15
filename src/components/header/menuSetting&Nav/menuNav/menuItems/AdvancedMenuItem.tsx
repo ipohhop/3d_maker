@@ -17,11 +17,11 @@ const AdvancedMenuItem: FunctionComponent<Props> = (props) => {
 
 
     const context = useGlobalContext()
-    let menuStatus = context.leftMenuStatus[1] as React.Dispatch<React.SetStateAction<string>>
+    let menuStatus = context.leftMenuStatus[1] as React.Dispatch<React.SetStateAction<any>>
 
     return (
         <li style={{position:"relative"}}>
-            <span onClick={()=>menuStatus(prev=>"advanced")}> Advanced </span>
+            <span onClick={()=>menuStatus({type:"advanced",props:{}})}> Advanced </span>
         </li>
     );
 };

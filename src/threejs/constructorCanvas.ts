@@ -8,6 +8,8 @@ import * as THREE from "three";
 import {DragControls} from "three/examples/jsm/controls/DragControls";
 import {log} from "util";
 import {Group} from "three";
+import ElementSettings from "../components/body/leftSettingMenu/elementSettings/ElementSettings";
+import React from "react";
 
 
 export class ConstructorCanvas extends Creator {
@@ -19,8 +21,8 @@ export class ConstructorCanvas extends Creator {
     addMac: () => void;
     playControl: (value: boolean) => void;
     addTransformControls: () => void;
-    getIntersects: (x: number, y: number, camera: Camera, object: Group[], width: number, height: number) => void;
-    checkElementEvent: () => void;
+    getIntersects: (x: number, y: number, camera: Camera, object: Group[], width: number, height: number) => Group | null;
+    checkElementEvent: (leftMenuIndicator: [any, React.Dispatch<React.SetStateAction<any>>]) => void;
 
 
     constructor(camera: Camera, width: number, height: number) {
@@ -90,16 +92,19 @@ export class ConstructorCanvas extends Creator {
             })
         }
 
-        this.checkElementEvent = () => {
+        this.checkElementEvent = (leftMenuIndicator: [any, React.Dispatch<React.SetStateAction<any>>]) => {
 
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
 
-                console.log(Object.values(this.elements.groups))
-
                 let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, Object.values(this.elements.groups), this.width, this.height);
 
                 console.log(intersects)
+                if (intersects){
+                    let element = intersects as Group
+
+                    leftMenuIndicator[1]({type:"element",props: element})
+                }
 
             }
             (this.canvas as HTMLCanvasElement).addEventListener("click", onDocumentMouseClick, false);
