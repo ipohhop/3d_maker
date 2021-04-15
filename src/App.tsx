@@ -52,9 +52,9 @@ function App() {
     const backCanvasPosition = useState(false)
 
     // creat canvas-constructor
-    const camera = useMemo(() => creatPerspectiveCamera(500, 500, 0, 0, 45.5), [])
+    const camera = useMemo(() => creatPerspectiveCamera(900, 600, 0, 0, 45.5), [])
 
-    const canvas = useState(new ConstructorCanvas(camera, 500, 500))
+    const canvas = useState(new ConstructorCanvas(camera, 900, 600))
     const insertState = useRef(new InsertState(canvas))
 
     const leftMenuStatus = useState("")

@@ -50,7 +50,6 @@ export class ConstructorCanvas extends Creator {
                 element.position.set(Math.random()*10,Math.random()*10,Math.random()*10)
 
                 canvas.addElement(element,name,true)
-
             })
         }
 

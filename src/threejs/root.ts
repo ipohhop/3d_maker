@@ -17,6 +17,7 @@ import {
 import gsap from 'gsap';
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {DragControls} from "three/examples/jsm/controls/DragControls";
+import {PerspectiveCamera} from "three";
 
 
 //  base class creator
@@ -161,8 +162,8 @@ export class BaseCreator {
         this.setWidthHeight = (width: number | undefined, height: number | undefined) => {
             if (width) this.width = width
             if (height) this.height = height;
-
-            (this.renderer as THREE.WebGLRenderer).setSize(this.width, this.height)
+            (this.camera as PerspectiveCamera).aspect = (width || this.width) / (height || this.height);
+            (this.renderer as THREE.WebGLRenderer).setSize((width || this.width), (height || this.height))
 
         }
 
