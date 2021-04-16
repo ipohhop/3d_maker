@@ -24,7 +24,6 @@ const ElementSettings: FunctionComponent<Props> = (props) => {
     const canvasElement= props.data
 
 
-
     // delete
     function deleteElement() {
          delete activCanvasObject.elements.groups[canvasElement.name]

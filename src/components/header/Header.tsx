@@ -7,7 +7,7 @@ import "./header.scss"
 import Logo from "../public/logo/Logo";
 import HeaderInfo from "./menuSetting&Nav/HeaderInfo";
 import {useGlobalContext} from "../../App";
-import {EventBackgroundCanvas} from "../../threejs/root";
+import {EventBackgroundCanvas} from "../../threejs/backfroundCanvas";
 
 
 interface OwnProps {}
