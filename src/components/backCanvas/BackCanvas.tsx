@@ -30,7 +30,7 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
     const canvas = useRef(new EventBackgroundCanvas(camera, width, height))
 
     //initialization canvas in component and mount
-    useEffect(() => canvas.current.init(canvasContainer, false), [])
+    useEffect(() => canvas.current.init(canvasContainer,false), [])
 
     // add Lights
     useEffect(() => canvas.current.addLights(lightThreePoints()), [])

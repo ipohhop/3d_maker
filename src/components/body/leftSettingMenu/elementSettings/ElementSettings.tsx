@@ -25,13 +25,17 @@ const ElementSettings: FunctionComponent<Props> = (props) => {
 
     // delete
     function deleteElement() {
-        const uuid:string = activCanvasObject.elements.groups[canvasElement.name].uuid
+        try {
+            const uuid: string = activCanvasObject.elements.groups[canvasElement.name].uuid
 
-        delete activCanvasObject.elements.groups[canvasElement.name]
+            delete activCanvasObject.elements.groups[canvasElement.name]
 
-        activCanvasObject.scene.children.forEach((item: any, index: any, array: any) => {
-            if (item.uuid === uuid) array.splice(index, 1)
-        })
+            activCanvasObject.scene.children.forEach((item: any, index: any, array: any) => {
+                if (item.uuid === uuid) array.splice(index, 1)
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     // SIZE

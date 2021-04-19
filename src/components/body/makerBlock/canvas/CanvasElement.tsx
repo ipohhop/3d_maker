@@ -1,5 +1,5 @@
 // outer
-import React, {FunctionComponent, useEffect, useRef} from 'react';
+import React, {FunctionComponent, useEffect, useRef, useState} from 'react';
 
 
 // local
@@ -17,16 +17,25 @@ const CanvasElement: FunctionComponent<Props> = () => {
 
     // get context canvas object
     const context = useGlobalContext()
-    const canvasObject = context.canvas.activeCanvas
+    const canvasObject = context.canvas
+
+    const [canvas, setcanvas] = useState(context.canvas.activeCanvas);
+
+    useEffect(()=>{
+        canvasObject.stateFunction = setcanvas
+    },[])
+
 
     // paste canvas constructor element in div
-    useEffect(() => {canvasObject.init(canvasContainer, true)},[canvasObject])
+    useEffect(() => {
+        console.log("active canvas:",canvas)
+        canvas.init(canvasContainer, true)},[canvas])
 
     // add light's  in scene
-    useEffect(() => canvasObject.addLights(lightThreePointsConstructions()), [])
+    useEffect(() => canvas.addLights(lightThreePointsConstructions()), [])
 
     // add light's  in scene
-    useEffect(() => canvasObject.checkElementEvent(context.leftMenuStatus), [])
+    useEffect(() => canvas.checkElementEvent(context.leftMenuStatus), [])
 
 
     return (<div ref={canvasContainer} className="canvas__inner-block"/>)
