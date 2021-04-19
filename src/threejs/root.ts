@@ -213,7 +213,7 @@ export class Creator extends BaseCreator {
         this.camera = camera
 
         this.addDragControls = (element: THREE.Group) => {
-            console.log([...Object.values(this.elements.groups)])
+
             let controls = new DragControls(
                 [element],
                 this.camera as THREE.PerspectiveCamera,

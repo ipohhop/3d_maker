@@ -99,7 +99,6 @@ export class ConstructorCanvas extends Creator {
 
                 let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, Object.values(this.elements.groups), this.width, this.height);
 
-                console.log(intersects)
                 if (intersects){
                     let element = intersects as Group
 
