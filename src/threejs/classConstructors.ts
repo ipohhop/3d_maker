@@ -60,16 +60,18 @@ export class InsertState {
         if (this.activeIndex) {
             this.activeIndex = this.activeIndex - 1
             // @ts-ignore
-            this.setActiveCanvas(prev=>{
-                console.log(prev)
-                return 1})
+            // this.setActiveCanvas(prev=>{
+            //     console.log(prev)
+            //     return 1})
+
+            this.activeCanvas = this.stateCanvas[this.activeIndex]
 
             // active or disable buttons
             // this.undoActive = this.activeIndex !== 0
 
-            // console.log("active canvas:",this.activeCanvas)
-            // console.log("canvas state:",this.stateCanvas)
-            // console.log("active index:",this.activeIndex)
+            console.log("active canvas:",this.activeCanvas)
+            console.log("canvas state:",this.stateCanvas)
+            console.log("active index:",this.activeIndex)
         }
     }
 

@@ -20,7 +20,7 @@ const CanvasElement: FunctionComponent<Props> = () => {
     const canvasObject = context.canvas.activeCanvas
 
     // paste canvas constructor element in div
-    useEffect(() => {canvasObject.init(canvasContainer, true)},[canvasObject])
+    useEffect(() => {canvasObject.init(canvasContainer, true)},[context.canvas])
 
     // add light's  in scene
     useEffect(() => canvasObject.addLights(lightThreePointsConstructions()), [])
