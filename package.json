@@ -13,6 +13,7 @@
     "@types/react-redux": "^7.1.16",
     "@types/react-router-dom": "^5.1.7",
     "axios": "^0.21.1",
+    "canvas2image": "^1.0.5",
     "gsap": "^3.6.1",
     "node-sass": "^5.0.0",
     "react": "^17.0.2",

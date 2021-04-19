@@ -1,20 +1,18 @@
 // outer
 import * as THREE from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
-import React, {Dispatch, SetStateAction} from 'react'
-
+import React from 'react'
 
 // local
 import {creatScene} from "./scene&camera";
 import {
-    Camera, CameraPositionProps,
+    Camera,
     Elements,
-    EventItem,
     Grid,
     Light,
     SceneSettings
 } from "./threejsTypes";
-import gsap from 'gsap';
+
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {DragControls} from "three/examples/jsm/controls/DragControls";
 import {PerspectiveCamera} from "three";
@@ -44,6 +42,7 @@ export class BaseCreator {
     setWidthHeight: (width: (number | undefined), height: (number | undefined)) => void;
     setControlStatus: (status: string) => void;
     clone: () => any;
+    saveCanvasPng: () => void;
 
     canvas: HTMLCanvasElement | undefined;
     camera: Camera;
@@ -51,6 +50,7 @@ export class BaseCreator {
     height: number;
     updatable: Set<any>;
     dragControls: DragControls [];
+    capture: boolean;
 
 
     constructor(camera: Camera, width: number, height: number) {
@@ -64,12 +64,15 @@ export class BaseCreator {
         this.dragControls = []
         this.orbitControl = []
         this.controlStatus = "orbit"
+        this.capture = false
         this.elements = {
             groups: {},
             elements: {}
         }
         this.renderer = new THREE.WebGLRenderer({
-            alpha: true
+            alpha: true,// for withe background in scene
+            antialias: true, // for save canvas in png
+            preserveDrawingBuffer: true // for save canvas in png
         })
 
 
@@ -94,9 +97,7 @@ export class BaseCreator {
                 this.orbitControl.forEach((item) => {
                     item.enabled = false
                 })
-
             }
-
         }
 
         this.clone = () => {
@@ -125,7 +126,6 @@ export class BaseCreator {
 
             this.startAnimation()
         }
-
 
         this.render = () => {
             this.renderer.render(this.scene, this.camera as THREE.PerspectiveCamera)
@@ -167,6 +167,25 @@ export class BaseCreator {
 
         }
 
+        this.saveCanvasPng = (name?: string) => {
+
+            const dataURL = (this.canvas as HTMLCanvasElement).toDataURL("image/png", 1.0);
+            window.location.href = dataURL
+            const fileName = name ? name + ".png" : 'my-canvas.png'
+
+
+            downloadImage(dataURL, fileName)
+            // Save | Download image
+            function downloadImage(data: string, filename:string) {
+                let a = document.createElement('a');
+                a.href = data;
+                a.download = filename;
+                // document.body.appendChild(a);
+                a.click();
+            }
+        }
+
+
         this.tick = () => {
             // only call the getDelta function once per frame!
             const delta = this.clock.getDelta();
@@ -191,7 +210,6 @@ export class BaseCreator {
 // class for creat full object
 
 export class Creator extends BaseCreator {
-
 
     addLights: (lights: (Light | Light[])) => void;
     addGrid: (grid: (Grid | Grid[])) => void;
@@ -238,9 +256,7 @@ export class Creator extends BaseCreator {
             if (element instanceof THREE.Group) {
                 this.elements.groups[nameElement] = element
                 this.scene.add(element)
-
                 if (drag) this.addDragControls(element)
-
 
                 return
             }
@@ -270,7 +286,6 @@ export class Creator extends BaseCreator {
                 this.elements.elements[nameElement] = element
                 this.scene.add(element)
             }
-
         }
 
         // method for add lights in scene
@@ -308,93 +323,3 @@ export class Creator extends BaseCreator {
         }
     }
 }
-
-
-
-
-// function onButtonClick(event){
-//
-//
-//
-//     let spherical = new THREE.Spherical();
-//     let startPos = new THREE.Vector3();
-//     let endPos = new THREE.Vector3();
-//     let axis = new THREE.Vector3();
-//     let tri = new THREE.Triangle();
-//
-//
-//
-//     spherical.setFromVector3(camera.position);
-//     spherical.phi = 0;
-//     spherical.makeSafe(); // important thing, see the docs for what it does
-//     endPos.setFromSpherical(spherical);
-//
-//     startPos.copy(camera.position);
-//
-//     tri.set(endPos, scene.position, startPos);
-//     tri.getNormal(axis);
-//
-//     let angle = startPos.angleTo(endPos);
-//
-//     let value = {value: 0};
-//     gsap.to(value, {value: 1,
-//         duration: 2,
-//         onUpdate: function(){
-//             camera.position.copy(startPos).applyAxisAngle(axis, angle * value.value);
-//             // controls.update();
-//         },
-//         // onStart: function(){
-//         //     moveUp.disabled = true;
-//         // },
-//         // onComplete: function(){
-//         //     moveUp.disabled = false;
-//         // }
-//     })
-//         .play();/**/
-// }
-//
-//
-
-
-// пример анимации с TWEEN
-
-// function cameraToMarker(marker) {
-//     const currentCamPosition = {x: marker.cameraPositionX, y: camera.position.y, z: marker.cameraPositionZ};
-//     const storedMarkerPosition = new THREE.Vector3(marker.positionX, marker.positionY, marker.positionZ);
-//     const newCameraTarget = getNewPointOnVector(currentCamPosition, storedMarkerPosition);
-//     const markerPosition = new THREE.Vector3(...Object.values(newCameraTarget));
-//     const startRotation = new THREE.Euler().copy(camera.rotation);
-//     camera.lookAt(storedMarkerPosition);
-//     const endRotation = new THREE.Euler().copy(camera.rotation);
-//     camera.rotation.copy(startRotation);
-//     new TWEEN.Tween(camera.rotation)
-//         .to(
-//             {
-//                 x: endRotation.x,
-//                 y: endRotation.y,
-//                 z: endRotation.z,
-//             }, 500)
-//         .easing(TWEEN.Easing.Quadratic.InOut)
-//         .onComplete(() => {
-//             new TWEEN.Tween(camera.position)
-//                 .to({
-//                     x: marker.cameraPositionX,
-//                     y: camera.position.y,
-//                     z: marker.cameraPositionZ,
-//                 })
-//                 .easing(TWEEN.Easing.Quadratic.InOut)
-//                 .onUpdate(() => {
-//                     camera.lookAt(storedMarkerPosition);
-//                 })
-//                 .onComplete(() => {
-//                     camera.lookAt(storedMarkerPosition);
-//                     radius = Math.hypot(...Object.values(markerPosition));
-//                     phi = Math.acos(markerPosition.y / radius);
-//                     theta = Math.atan2(markerPosition.z, markerPosition.x);
-//                     lon = THREE.Math.radToDeg(theta);
-//                     lat = 90 - THREE.Math.radToDeg(phi);
-//                 })
-//                 .start();
-//         })
-//         .start();
-// }

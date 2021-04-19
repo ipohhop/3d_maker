@@ -17,14 +17,16 @@ type GlobalContent = {
     canvas: InsertState | any,
     leftMenuStatus: [any, React.Dispatch<React.SetStateAction<any>>] | string ,
     backCanvasObject :EventBackgroundCanvas | undefined,
-    setBackCanvasPosition:Dispatch<SetStateAction<any>> | undefined
+    setBackCanvasPosition:Dispatch<SetStateAction<any>> | undefined,
+    fileName:[any, React.Dispatch<React.SetStateAction<any>>] | string ,
 }
 
 const MyGlobalContext = createContext<GlobalContent>({
     canvas: 1,
     leftMenuStatus: "",
     backCanvasObject : undefined,
-    setBackCanvasPosition:undefined
+    setBackCanvasPosition:undefined,
+    fileName: ""
 })
 
 export const useGlobalContext = () => useContext(MyGlobalContext)
@@ -51,6 +53,7 @@ function App() {
 
     const [backCanvasObject, setbackCanvasObject] = React.useState()
     const backCanvasPosition = useState(false)
+    const fileName= useState("")
 
     // creat canvas-constructor
     const camera = useMemo(() => creatPerspectiveCamera(800, 600, 0, 0, 45.5), [])
@@ -80,7 +83,8 @@ function App() {
                         canvas: insertState.current,
                         leftMenuStatus: leftMenuStatus,
                         backCanvasObject:backCanvasObject,
-                        setBackCanvasPosition : setOnMonitorStatus(backCanvasPosition)
+                        setBackCanvasPosition : setOnMonitorStatus(backCanvasPosition),
+                        fileName:fileName
                     }}>
 
                     <Header/>
