@@ -1,9 +1,12 @@
+// outer
 import React, {FunctionComponent} from 'react';
 
 
+// local
 import "./advancedSettings.scss"
 import {useGlobalContext} from "../../../../App";
-import {InsertState} from "../../../../classConstructors";
+import {InsertState} from "../../../../threejs/classConstructors";
+
 interface OwnProps {
 }
 

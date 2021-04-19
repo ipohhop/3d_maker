@@ -8,8 +8,8 @@ import Header from "./components/header/Header";
 import BackCanvas from "./components/backCanvas/BackCanvas";
 import {creatPerspectiveCamera} from "./threejs/scene&camera";
 import {ConstructorCanvas} from "./threejs/constructorCanvas";
-import {InsertState} from "./classConstructors";
 import {EventBackgroundCanvas} from "./threejs/backfroundCanvas";
+import {InsertState} from "./threejs/classConstructors";
 
 
 

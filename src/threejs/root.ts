@@ -23,7 +23,7 @@ import {PerspectiveCamera} from "three";
 export class BaseCreator {
 
     readonly elements: Elements;
-    protected scene: THREE.Scene;
+
     protected renderer: THREE.WebGLRenderer;
     protected controls: OrbitControls | TransformControls | DragControls | undefined;
     protected mountTime: boolean;
@@ -44,6 +44,7 @@ export class BaseCreator {
     clone: () => any;
     saveCanvasPng: () => void;
 
+    scene: THREE.Scene;
     canvas: HTMLCanvasElement | undefined;
     camera: Camera;
     width: number;

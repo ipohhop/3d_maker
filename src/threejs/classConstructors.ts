@@ -1,7 +1,7 @@
 
 
 // local
-import {ConstructorCanvas} from "./threejs/constructorCanvas";
+import {ConstructorCanvas} from "./constructorCanvas";
 import React from "react";
 
 
@@ -9,7 +9,7 @@ export class InsertState {
  // privat
     private stateCanvas: ConstructorCanvas[]
     private activeIndex: number
-    private arrayLimit: number
+    private readonly arrayLimit: number
 
   // out
     activeCanvas:ConstructorCanvas
@@ -67,9 +67,9 @@ export class InsertState {
             // active or disable buttons
             // this.undoActive = this.activeIndex !== 0
 
-            console.log("active canvas:",this.activeCanvas)
-            console.log("canvas state:",this.stateCanvas)
-            console.log("active index:",this.activeIndex)
+            // console.log("active canvas:",this.activeCanvas)
+            // console.log("canvas state:",this.stateCanvas)
+            // console.log("active index:",this.activeIndex)
         }
     }
 
