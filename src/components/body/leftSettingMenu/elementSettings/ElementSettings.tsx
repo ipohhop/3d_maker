@@ -101,7 +101,7 @@ const ElementSettings: FunctionComponent<Props> = (props) => {
             <h3>Size</h3>
             <div className="slider-module--slider-container--2O8f7">
                 <div className="slider-module--inner--1oNQH">
-                    <input type="range" min="0" max="20" step={stepSize * 10} onChange={setSize}
+                    <input type="range" min="0" max="5" step={stepSize * 10} onChange={setSize}
                            className="slider-module--slider--1oBFm" value={sizeValue}/>
                     <input type="number" className="slider-module--box--2rfF_" onChange={setSize} step={stepSize}
                            value={sizeValue}/>

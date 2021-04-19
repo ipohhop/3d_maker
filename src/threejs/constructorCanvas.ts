@@ -101,7 +101,7 @@ export class ConstructorCanvas extends Creator {
 
                 if (intersects){
                     let element = intersects as Group
-
+                    leftMenuIndicator[1]({type:""})
                     leftMenuIndicator[1]({type:"element",props: element})
                 }
 
