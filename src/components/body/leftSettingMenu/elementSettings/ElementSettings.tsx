@@ -33,6 +33,8 @@ const ElementSettings: FunctionComponent<Props> = (props) => {
             activCanvasObject.scene.children.forEach((item: any, index: any, array: any) => {
                 if (item.uuid === uuid) array.splice(index, 1)
             })
+
+
         } catch (e) {
             console.log(e)
         }

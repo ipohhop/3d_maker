@@ -5,6 +5,7 @@ import React, {FunctionComponent, useEffect, useRef, useState} from 'react';
 // local
 import {lightThreePointsConstructions} from "../../../../threejs/otherConstructors";
 import {useGlobalContext} from "../../../../App";
+import {log} from "util";
 
 
 
@@ -19,23 +20,38 @@ const CanvasElement: FunctionComponent<Props> = () => {
     const context = useGlobalContext()
     const canvasObject = context.canvas
 
-    const [canvas, setcanvas] = useState(context.canvas.activeCanvas);
+    const [canvas, setCanvas] = useState(context.canvas.activeCanvas);
 
     useEffect(()=>{
-        canvasObject.stateFunction = setcanvas
+        canvasObject.stateFunction = setCanvas
     },[])
 
 
     // paste canvas constructor element in div
     useEffect(() => {
-        console.log("active canvas:",canvas)
-        canvas.init(canvasContainer, true)},[canvas])
+        console.log("active canvas for init:",canvas);
+        (canvasContainer.current as unknown as HTMLElement).innerHTML = "";
+
+        canvas.canvas
+        ? setTimeout(()=>{
+                // canvas.render()
+                // canvas.startAnimation()
+                // (canvasContainer.current as unknown as HTMLElement).appendChild(canvas.canvas)
+                canvas.init(canvasContainer, true)
+            },3000)
+        :canvas.init(canvasContainer, true)
+
+
+
+
+    },[canvas])
+
 
     // add light's  in scene
     useEffect(() => canvas.addLights(lightThreePointsConstructions()), [])
 
     // add light's  in scene
-    useEffect(() => canvas.checkElementEvent(context.leftMenuStatus), [])
+    useEffect(() => canvas.checkElementEvent(context.leftMenuStatus), [canvas])
 
 
     return (<div ref={canvasContainer} className="canvas__inner-block"/>)

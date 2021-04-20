@@ -2,6 +2,11 @@
 import * as THREE from 'three'
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import React from 'react'
+import {TransformControls} from "three/examples/jsm/controls/TransformControls";
+import {DragControls} from "three/examples/jsm/controls/DragControls";
+import {PerspectiveCamera} from "three";
+import _ from "lodash"
+
 
 // local
 import {creatScene} from "./scene&camera";
@@ -13,16 +18,12 @@ import {
     SceneSettings
 } from "./threejsTypes";
 
-import {TransformControls} from "three/examples/jsm/controls/TransformControls";
-import {DragControls} from "three/examples/jsm/controls/DragControls";
-import {PerspectiveCamera} from "three";
-
 
 //  base class creator
 
 export class BaseCreator {
 
-    readonly elements: Elements;
+    elements: Elements;
 
     protected renderer: THREE.WebGLRenderer;
     protected controls: OrbitControls | TransformControls | DragControls | undefined;
@@ -33,8 +34,8 @@ export class BaseCreator {
 
     private clock: THREE.Clock;
     private readonly tick: () => void;
-    private readonly startAnimation: () => void;
-    private orbitControl: OrbitControls[];
+    startAnimation: () => void;
+    orbitControl: OrbitControls[];
 
     init: (container: React.MutableRefObject<any>, orbitControl?: boolean) => void;
     startWindowResize: () => void;
@@ -103,13 +104,31 @@ export class BaseCreator {
 
         this.clone = () => {
 
-            let method1 = Object.assign({}, this);
-            let method2 = JSON.parse(JSON.stringify(this));
 
-            return Object.assign({}, method1, method2)
+            // this.scene.clone()
+
+            // let method1 = Object.assign({}, this);
+            // let method2 = JSON.parse(JSON.stringify(this));
+            //
+            //
+            // return Object.assign({}, method1, method2)
+
+            // let object = {}
+            //
+            // for (const x in this) {
+            //     let copy = _.clone(this[x])
+            //     // @ts-ignore
+            //     object[x] = copy
+            // }
+            const copy = _.cloneDeep(this)
+            console.log("creat copy object:", copy)
+            console.log("original object:", this)
+
+            return copy
 
             // return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
         }
+
 
         this.init = (container: React.MutableRefObject<any>, orbitControl: boolean = true) => {
             // enter size render window
@@ -119,7 +138,7 @@ export class BaseCreator {
             this.canvas = (this.renderer as THREE.WebGLRenderer).domElement
 
             // add canvas element in DOM , "if" for don't canvas add in DOM more 1 time if useEffect call more 1 time
-            container.current.innerHTML = ""
+            // container.current.innerHTML = ""
             container.current.appendChild(this.canvas) && (this.mountTime = false)
 
             // add orbit control to canvas
@@ -176,8 +195,9 @@ export class BaseCreator {
 
 
             downloadImage(dataURL, fileName)
+
             // Save | Download image
-            function downloadImage(data: string, filename:string) {
+            function downloadImage(data: string, filename: string) {
                 let a = document.createElement('a');
                 a.href = data;
                 a.download = filename;
@@ -243,6 +263,7 @@ export class Creator extends BaseCreator {
 
             this.dragControls.push(controls)
             if (!(this.controlStatus === "drag")) controls.enabled = false
+            console.log(this)
         }
 
 
@@ -265,9 +286,7 @@ export class Creator extends BaseCreator {
             //если группа создаем объект группы и заполняем элементом(ми) добавляем группу по name в объект elements.group[name] далее добавляем в сцену
             if (inGroup) {
                 const group = new THREE.Group();
-                if (element instanceof Array) {
-                    (group as THREE.Group).add(...element)
-                }
+                if (element instanceof Array) (group as THREE.Group).add(...element)
                 if (element instanceof THREE.Mesh) group.add(element)
                 group.position.set(x, y, z)
                 this.elements.groups[nameElement] = (group as THREE.Group)

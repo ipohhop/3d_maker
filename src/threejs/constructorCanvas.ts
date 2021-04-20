@@ -1,15 +1,18 @@
+// outer
+import React from "react";
+import {Group} from "three";
+import {DragControls} from "three/examples/jsm/controls/DragControls";
+import * as THREE from "three";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {TransformControls} from "three/examples/jsm/controls/TransformControls";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+
+
 // local
 import {Creator} from "./root";
 import {Camera} from "./threejsTypes";
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import {TransformControls} from "three/examples/jsm/controls/TransformControls";
-import * as THREE from "three";
-import {DragControls} from "three/examples/jsm/controls/DragControls";
-import {log} from "util";
-import {Group} from "three";
 import ElementSettings from "../components/body/leftSettingMenu/elementSettings/ElementSettings";
-import React from "react";
+
 
 
 export class ConstructorCanvas extends Creator {
