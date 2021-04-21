@@ -1,4 +1,5 @@
 import {BaseCreator} from "./root";
+import {creatPerspectiveCamera, creatScene} from "./scene&camera";
 
 export class CareTaker {
     private state: any[]
@@ -54,8 +55,8 @@ export class CareTaker {
         this.setDataInObject = (memoObject: any) => {
             const object = this.object
 
-            object.camera.copy(memoObject.camera, true)
-            object.scene.copy(memoObject.scene, true)
+            object.camera = creatPerspectiveCamera(800, 600, 0, 0, 45.5).copy(memoObject.camera, true)
+            object.scene = creatScene().copy(memoObject.scene, true)
 
             object.width = memoObject.width
             object.height = memoObject.height

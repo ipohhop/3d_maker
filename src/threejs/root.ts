@@ -322,6 +322,8 @@ export class Creator extends BaseCreator {
                 this.scene.add(element)
                 if (drag) this.addDragControls(element)
 
+                this.snapshot()
+
                 return
             }
 
@@ -334,6 +336,8 @@ export class Creator extends BaseCreator {
                 this.elements.groups[nameElement] = (group as THREE.Group)
                 this.scene.add(this.elements.groups[nameElement])
 
+                this.snapshot()
+
                 return
             }
 
@@ -342,11 +346,17 @@ export class Creator extends BaseCreator {
                 element.forEach((item, index) => {
                     this.elements.elements[nameElement + (index + 1)] = item
                     this.scene.add(item)
+
+                    this.snapshot()
+
                 })
             } else {
                 element.position.set(x, y, z)
                 this.elements.elements[nameElement] = element
                 this.scene.add(element)
+
+                this.snapshot()
+
             }
         }
 
