@@ -4,7 +4,7 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import React from 'react'
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {DragControls} from "three/examples/jsm/controls/DragControls";
-import {PerspectiveCamera} from "three";
+import {Object3D, PerspectiveCamera} from "three";
 import _ from "lodash"
 
 
@@ -17,6 +17,7 @@ import {
     Light,
     SceneSettings
 } from "./threejsTypes";
+import {CareTaker} from "./careTaker";
 
 
 //  base class creator
@@ -45,30 +46,35 @@ export class BaseCreator {
     clone: () => any;
     saveCanvasPng: () => void;
 
+
+
     scene: THREE.Scene;
     canvas: HTMLCanvasElement | undefined;
     camera: Camera;
     width: number;
     height: number;
     updatable: Set<any>;
-    dragControls: DragControls [];
+    dragControls: DragControls []
     capture: boolean;
+    careTaker: CareTaker;
+    snapshot: () => void;
 
 
     constructor(camera: Camera, width: number, height: number) {
-        this.camera = camera
-        this.scene = creatScene()
-        this.width = width
-        this.height = height
+        this.camera = camera  //+
+        this.scene = creatScene()  //+
+        this.width = width  // +
+        this.height = height  // +
         this.mountTime = true
         this.clock = new THREE.Clock()
         this.updatable = new Set()
-        this.dragControls = []
-        this.orbitControl = []
-        this.controlStatus = "orbit"
+        this.dragControls = [] //+
+        this.orbitControl = [] //+
+        this.controlStatus = "orbit" // +
         this.capture = false
+        this.careTaker = new CareTaker(this)
         this.elements = {
-            groups: {},
+            groups: {},   // +
             elements: {}
         }
         this.renderer = new THREE.WebGLRenderer({
@@ -76,6 +82,42 @@ export class BaseCreator {
             antialias: true, // for save canvas in png
             preserveDrawingBuffer: true // for save canvas in png
         })
+
+        this.snapshot = () => {
+
+            function clone(object: any) {
+                return _.cloneDeep(object)
+            }
+
+
+            class Memonto {
+                camera: Object3D;
+                scene: Object3D;
+                width: number;
+                height: number;
+                dragControls: DragControls []
+                orbitControl: OrbitControls[]
+                controlStatus: string;
+                elements: Elements;
+
+
+                constructor(object: BaseCreator) {
+                    this.camera = object.camera.clone(true)
+                    this.scene = object.scene.clone(true)
+                    this.width = clone(object.width)
+                    this.height = clone(object.height)
+                    this.dragControls = object.dragControls.map(item => clone(item))
+                    this.orbitControl = object.orbitControl.map(item => clone(item))
+                    this.controlStatus = object.controlStatus
+                    this.elements = clone(object.elements)
+                }
+            }
+
+            const snapShot = new Memonto(this)
+
+            this.careTaker.saveSnapshot(snapShot)
+        }
+
 
 
         this.setControlStatus = (status: string) => {
