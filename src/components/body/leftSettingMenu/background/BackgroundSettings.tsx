@@ -5,7 +5,8 @@ import * as THREE from 'three'
 //local
 import "./backgraundSettings.scss"
 import {useGlobalContext} from "../../../../App";
-import {InsertState} from "../../../../classConstructors";
+import {InsertState} from "../../../../threejs/classConstructors";
+
 
 interface OwnProps {
 }

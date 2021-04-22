@@ -24,11 +24,10 @@ const EditMenuItem: FunctionComponent<Props> = (props) => {
             <span onClick={() => setOptionsState(prev => !prev)}> Edit </span>
             {optionsState &&
             <div className="option-module--options--1VaAT">
-              <div className="option-module--option--1LMwC null" onClick={()=>{
-                  context.canvas.UndoCanvas()
+              <div className="option-module--option--1LMwC null"
 
+                   onClick={canvasObject.careTaker.undo}>
 
-              }}>
                 <div className="option-module--icon--1zfpu" >
                   <svg version="1.1" id="Capa_1" x="0px" width="20px" height="20px" y="0px" viewBox="0 0 436.48 436.48">
                     <path d="M224,143.573c-56.427,0-107.84,21.013-147.2,55.467L0,122.24v192h192l-77.12-77.12
@@ -38,11 +37,10 @@ const EditMenuItem: FunctionComponent<Props> = (props) => {
                 </div>
 
                 <span>Undo</span></div>
-              <div className="option-module--option--1LMwC " onClick={()=>{
-                  context.canvas.RedoCanvas()
+              <div className="option-module--option--1LMwC "
 
+                   onClick={canvasObject.careTaker.redo}>
 
-              }}>
                 <div className="option-module--icon--1zfpu" >
                   <svg version="1.1" id="Capa_1" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 436.48 436.48">
                     <path d="M359.573,199.04c-39.253-34.453-90.667-55.467-147.093-55.467c-99.2,0-183.147,64.64-212.48,154.027l50.453,16.64

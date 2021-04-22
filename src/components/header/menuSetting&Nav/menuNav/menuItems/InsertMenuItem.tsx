@@ -36,16 +36,11 @@ const InsertMenuItem: FunctionComponent<Props> = () => {
         canvasObject.addIpad()
     }
 
-
     const options =[
         {name: "iPhone", event: addiPhone},
         {name: "iPad", event: addiPad},
         {name: "Macbook", event: addMacbook}
     ]
-
-    useEffect(()=>{
-        console.log(context.canvas)
-    },[context])
 
     return (
         <li style={{position:"relative"}}>

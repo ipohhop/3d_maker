@@ -8,6 +8,7 @@ import "./leftSettingMenu.scss"
 import BackgroundSettings from "./background/BackgroundSettings";
 import AdvancedSettings from "./advanced/AdvancedSettings";
 import {useGlobalContext} from "../../../App";
+import ElementSettings from "./elementSettings/ElementSettings";
 
 
 interface OwnProps {}
@@ -19,8 +20,7 @@ const LeftSettingMenu: FunctionComponent<Props> = (props) => {
     const context = useGlobalContext()
     const menuStatus = context.leftMenuStatus[0]
 
-
-    switch (menuStatus) {
+    switch (menuStatus.type) {
         case "background":
             return <div className="left-settings-menu__container">
                     <BackgroundSettings/>
@@ -29,7 +29,9 @@ const LeftSettingMenu: FunctionComponent<Props> = (props) => {
             return <div className="left-settings-menu__container">
                 <AdvancedSettings/>
             </div>
-
+        case "element" :
+            return <> <ElementSettings data={menuStatus.props}/> </>
+            // return menuStatus.props()
         default:
             return <div className="left-settings-menu__container"/>
 

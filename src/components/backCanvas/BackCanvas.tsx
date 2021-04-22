@@ -4,10 +4,11 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 //local
 import {creatPerspectiveCamera} from "../../threejs/scene&camera";
-import {EventBackgroundCanvas} from "../../threejs/root";
+
 import {lightThreePoints, planeCreator} from "../../threejs/otherConstructors";
 import "./backCanvas.scss"
 import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader";
+import {EventBackgroundCanvas} from "../../threejs/backfroundCanvas";
 
 interface OwnProps {
     backCanvasObject: Dispatch<SetStateAction<any>>
@@ -29,7 +30,7 @@ const BackCanvas: FunctionComponent<Props> = (props) => {
     const canvas = useRef(new EventBackgroundCanvas(camera, width, height))
 
     //initialization canvas in component and mount
-    useEffect(() => canvas.current.init(canvasContainer, false), [])
+    useEffect(() => canvas.current.init(canvasContainer,false), [])
 
     // add Lights
     useEffect(() => canvas.current.addLights(lightThreePoints()), [])

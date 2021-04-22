@@ -8,22 +8,25 @@ import Header from "./components/header/Header";
 import BackCanvas from "./components/backCanvas/BackCanvas";
 import {creatPerspectiveCamera} from "./threejs/scene&camera";
 import {ConstructorCanvas} from "./threejs/constructorCanvas";
-import {InsertState} from "./classConstructors";
-import {EventBackgroundCanvas} from "./threejs/root";
+import {EventBackgroundCanvas} from "./threejs/backfroundCanvas";
+import {InsertState} from "./threejs/classConstructors";
+
 
 
 type GlobalContent = {
     canvas: InsertState | any,
-    leftMenuStatus: [string, React.Dispatch<React.SetStateAction<string>>] | string ,
+    leftMenuStatus: [any, React.Dispatch<React.SetStateAction<any>>] | string ,
     backCanvasObject :EventBackgroundCanvas | undefined,
-    setBackCanvasPosition:Dispatch<SetStateAction<any>> | undefined
+    setBackCanvasPosition:Dispatch<SetStateAction<any>> | undefined,
+    fileName:[any, React.Dispatch<React.SetStateAction<any>>] | string ,
 }
 
 const MyGlobalContext = createContext<GlobalContent>({
     canvas: 1,
     leftMenuStatus: "",
     backCanvasObject : undefined,
-    setBackCanvasPosition:undefined
+    setBackCanvasPosition:undefined,
+    fileName: ""
 })
 
 export const useGlobalContext = () => useContext(MyGlobalContext)
@@ -50,14 +53,18 @@ function App() {
 
     const [backCanvasObject, setbackCanvasObject] = React.useState()
     const backCanvasPosition = useState(false)
+    const fileName= useState("")
 
     // creat canvas-constructor
-    const camera = useMemo(() => creatPerspectiveCamera(500, 500, 0, 0, 45.5), [])
+    const camera = useMemo(() => creatPerspectiveCamera(800, 600, 0, 0, 45.5), [])
 
-    const canvas = useState(new ConstructorCanvas(camera, 500, 500))
+    const canvas = useState(new ConstructorCanvas(camera, 800, 600))
     const insertState = useRef(new InsertState(canvas))
 
-    const leftMenuStatus = useState("")
+    const leftMenuStatus = useState({
+        type:"",
+        props:{}
+    })
 
 
     if (!backCanvasPosition[0]) {
@@ -76,7 +83,8 @@ function App() {
                         canvas: insertState.current,
                         leftMenuStatus: leftMenuStatus,
                         backCanvasObject:backCanvasObject,
-                        setBackCanvasPosition : setOnMonitorStatus(backCanvasPosition)
+                        setBackCanvasPosition : setOnMonitorStatus(backCanvasPosition),
+                        fileName:fileName
                     }}>
 
                     <Header/>

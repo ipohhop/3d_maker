@@ -1,9 +1,12 @@
+// outer
 import React, {FunctionComponent} from 'react';
 
 
+// local
 import "./advancedSettings.scss"
 import {useGlobalContext} from "../../../../App";
-import {InsertState} from "../../../../classConstructors";
+import {InsertState} from "../../../../threejs/classConstructors";
+
 interface OwnProps {
 }
 
@@ -16,8 +19,9 @@ const AdvancedSettings: FunctionComponent<Props> = (props) => {
 
 
     return (
-        <div className="displayedtab-module--main-container--B-VV-">
-            <div className="advancedtab-module--advanced-tab-container--1asR3"><h3>Dimensions</h3>
+        <>
+            <div className="advancedtab-module--advanced-tab-container--1asR3">
+                <h3>Dimensions</h3>
                 <div className="advancedtab-module--dimensions-div--3G7Uj">
                     <div><span>Width:</span><input className="advancedtab-module--dimensions--1HnFq" type="number"
                                                    onChange={(event => canvasObject.setWidthHeight(+event.target.value,undefined))}
@@ -29,7 +33,7 @@ const AdvancedSettings: FunctionComponent<Props> = (props) => {
                                                     defaultValue={canvasObject.height}/></div>
                 </div>
             </div>
-        </div>
+        </>
 
 
 
