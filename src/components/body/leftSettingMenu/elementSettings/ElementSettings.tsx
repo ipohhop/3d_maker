@@ -3,6 +3,7 @@ import React, {FunctionComponent, useMemo, useState} from 'react';
 
 import "./elementSettings.scss"
 import {useGlobalContext} from "../../../../App";
+import {DragControls} from "three/examples/jsm/controls/DragControls";
 
 interface OwnProps {
     data: THREE.Group
@@ -33,6 +34,8 @@ const ElementSettings: FunctionComponent<Props> = (props) => {
             activCanvasObject.scene.children.forEach((item: any, index: any, array: any) => {
                 if (item.uuid === uuid) array.splice(index, 1)
             })
+
+            activCanvasObject.dragControls.forEach((item:DragControls)=> item.getObjects()[0].uuid === uuid && item.deactivate())
 
 
         } catch (e) {

@@ -101,7 +101,15 @@ export class ConstructorCanvas extends Creator {
             const onDocumentMouseClick = (event: any) => {
                 event.preventDefault();
 
-                let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, Object.values(this.elements.groups), this.width, this.height);
+
+
+                // @ts-ignore
+                const arrayGroup : Group[] = this.scene.children.filter(item=>item.type === "Group")
+
+
+
+                // let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, Object.values(this.elements.groups), this.width, this.height);
+                let intersects = this.getIntersects(event.layerX, event.layerY, this.camera, arrayGroup , this.width, this.height);
 
                 if (intersects){
                     let element = intersects as Group

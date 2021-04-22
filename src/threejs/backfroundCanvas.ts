@@ -126,6 +126,8 @@ export class EventBackgroundCanvas extends Creator {
                     const action = mixer.clipAction(clip);
                     action.play()
 
+
+
                     // @ts-ignore
                     model.tick = (delta: any) => mixer.update(delta)
                     this.updatable.add(model)

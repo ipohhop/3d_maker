@@ -26,12 +26,12 @@ export class BaseCreator {
 
     elements: Elements;
 
-    protected renderer: THREE.WebGLRenderer;
+    renderer: THREE.WebGLRenderer;
     protected controls: OrbitControls | TransformControls | DragControls | undefined;
     protected mountTime: boolean;
     protected onWindowResize: () => void;
-    protected controlStatus: string;
-    protected render: () => void;
+    controlStatus: string;
+    render: () => void;
 
     private clock: THREE.Clock;
     private readonly tick: () => void;
@@ -45,7 +45,7 @@ export class BaseCreator {
     setControlStatus: (status: string) => void;
     clone: () => any;
     saveCanvasPng: () => void;
-
+    addDragControls: (element: THREE.Group) => void;
 
 
     scene: THREE.Scene;
@@ -247,7 +247,20 @@ export class BaseCreator {
                 a.click();
             }
         }
+        this.addDragControls = (element: THREE.Group) => {
 
+            let controls = new DragControls(
+                [element],
+                this.camera as THREE.PerspectiveCamera,
+                this.canvas);
+
+            controls.transformGroup = true
+            controls.addEventListener('drag', this.render);
+
+            this.dragControls.push(controls)
+            if (!(this.controlStatus === "drag")) controls.enabled = false
+            console.log(this)
+        }
 
         this.tick = () => {
             // only call the getDelta function once per frame!
@@ -284,29 +297,12 @@ export class Creator extends BaseCreator {
                             rotation?: [x: number, y: number, z: number],
                             aspect?: number, near?: number, far?: number) => void;
 
-    private readonly addDragControls: (element: THREE.Group) => void;
-
 
     constructor(camera: Camera, width: number, height: number) {
         super(camera, width, height)
         this.width = width
         this.height = height
         this.camera = camera
-
-        this.addDragControls = (element: THREE.Group) => {
-
-            let controls = new DragControls(
-                [element],
-                this.camera as THREE.PerspectiveCamera,
-                this.canvas);
-
-            controls.transformGroup = true
-            controls.addEventListener('drag', this.render);
-
-            this.dragControls.push(controls)
-            if (!(this.controlStatus === "drag")) controls.enabled = false
-            console.log(this)
-        }
 
 
         // method for add element in scene
